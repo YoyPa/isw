@@ -25,6 +25,7 @@ How to use it ?
 - It will need ec_sys module so you should use `isw -l` or `isw -ls` to load it (read below).
 - Then use options `-a -v -x` if you want to change default and `-w` to write in EC.
 - Option `-c` can be used alone or in conjuction with `-w` like `-cw -wc -cwc` to print EC before/after write or both.
+NB: It will need privilege.
 
 isw -s
 ------
