@@ -17,7 +17,7 @@ In details
 - VALUE correspond to °C.
 - X is the increment for VALUE.
 - In Short: Fan will start spinning at VALUE and increase speed every X °C.
-- NB: EC contain 7 values, only 6 of them are edited, last value is unchanged (100°C).
+NB: EC contain 7 values, only 6 of them are edited, last value is unchanged (100°C).
 
 How to use it ?
 ---------------
