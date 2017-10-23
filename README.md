@@ -28,7 +28,7 @@ How to use it ?
 
 isw -s
 ------
-- It add the following for ec_sys to load at startup:
+It add the following for ec_sys to load at startup:
 ```
 "ec_sys" > /etc/modules-load.d/isw-ec_sys.conf
 "options ec_sys write_support=1" > /etc/modprobe.d/isw-ec_sys.conf
@@ -36,7 +36,7 @@ isw -s
 
 isw -l
 ------
-- It load ec_sys directly with:
+It load ec_sys directly with:
 ```
 modprobe ec_sys write_support=1
 ```
