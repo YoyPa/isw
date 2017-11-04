@@ -71,7 +71,7 @@ def ec_write(option, opt, value, parser):
 # option -c
 def ec_check(option, opt, value, parser):
 	print('\nEC dump '+str(DUMP_POS)+' modification:')
-	os.system("od -t x1 "+str(EC_IO_FILE))
+	os.system("od -A x -t x1z "+str(EC_IO_FILE))
 
 def main():
 	# permet l'utilisation d'arguments
