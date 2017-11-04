@@ -3,7 +3,7 @@
 ## Warning
 - isw was made for MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
 - You can find documentation at: NA
-- isw was only tested under Arch/systemd.
+- isw is only tested under Arch/systemd.
 - Use it at your own risk !
 
 ## Purpose
