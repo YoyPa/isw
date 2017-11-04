@@ -55,7 +55,7 @@ modprobe ec_sys write_support=1
 ### isw -c
 It check your EC with:
 ```
-od -t x1 /sys/kernel/debug/ec/ec0/io
+sudo od -A x -t x1z /sys/kernel/debug/ec/ec0/io
 ```
 
 ## TODO
