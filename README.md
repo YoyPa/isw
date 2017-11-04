@@ -1,4 +1,4 @@
-# isw / Ice-Sealed Wyvern
+# ISW / Ice-Sealed Wyvern
 
 ## Warning
 - isw was made for MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
