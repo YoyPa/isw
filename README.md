@@ -24,7 +24,20 @@ NB: EC contain 7 values, only 6 of them are edited, last value is unchanged (100
 - Then use options `-a -v -x` if you want to change default and `-w` to write in EC.
 - Option `-c` can be used alone or in conjuction with `-w` like `-cw -wc -cwc` to print EC before/after write or both.
 
-NB: It will need privilege.
+NB: all option exept -h need priviledges.
+
+<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif">
+	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif" width="427" height="480" border="10" />
+</a>
+<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-w.gif">
+	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-w.gif" width="427" height="480" border="10" />
+</a>
+<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-cwc.gif">
+	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-cwc.gif" width="427" height="480" border="10" />
+</a>
+<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif">
+	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif" width="427" height="480" border="10" />
+</a>
 
 ### isw -s
 It add the following for ec_sys to load at startup:
