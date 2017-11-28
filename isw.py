@@ -9,7 +9,7 @@ from optparse import OptionParser
 EC_IO_FILE="/sys/kernel/debug/ec/ec0/io"
 EC_SYS_STARTUP="/etc/modules-load.d/isw-ec_sys.conf"
 EC_SYS_STARTUP_OPT="/etc/modprobe.d/isw-ec_sys.conf"
-DUMP_POS="before"
+DUMP_POS=""
 ADDRESS=0x6a
 VALUE=68
 X=int(5)
@@ -58,7 +58,7 @@ def ec_write(option, opt, value, parser):
 	global ADDRESS
 	global VALUE
 	global DUMP_POS
-	DUMP_POS="after"
+	DUMP_POS="after modification"
 	print('\r')
 	with open(EC_IO_FILE,"wb") as file:
 		for i in range(6):
@@ -70,7 +70,8 @@ def ec_write(option, opt, value, parser):
 
 # option -c
 def ec_check(option, opt, value, parser):
-	print('\nEC dump '+str(DUMP_POS)+' modification:')
+	print('\nEC dump '+str(DUMP_POS))
+	print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
 	os.system("od -A x -t x1z "+str(EC_IO_FILE))
 
 def main():
