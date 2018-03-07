@@ -27,16 +27,16 @@ def check_ec_sys(option, opt, value, parser):
 def check_ec_sys_startup(option, opt, value, parser):
 	if not os.path.exists(EC_SYS_STARTUP):
 		with open(EC_SYS_STARTUP,"xt") as file:
-			file.write("ec_sys")
+			file.write("ec_sys\n")
 		print(EC_SYS_STARTUP+" created")
 	else:
-		print("nothing added in module-load.d")
+		print("nothing to do "+EC_SYS_STARTUP+" already exist")
 	if not os.path.exists(EC_SYS_STARTUP_OPT):
 		with open(EC_SYS_STARTUP_OPT,"xt") as file:
-			file.write("options ec_sys write_support=1")
+			file.write("options ec_sys write_support=1\n")
 		print(EC_SYS_STARTUP_OPT+" created")
 	else:
-		print("nothing added in modprobe.d")
+		print("nothing to do "+EC_SYS_STARTUP_OPT+" already exist")
 
 # option -a
 def change_address(option, opt, value, parser):

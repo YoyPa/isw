@@ -1,8 +1,8 @@
 # ISW / Ice-Sealed Wyvern
 
 ## Warning
-- isw was made for MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
-- You can find documentation at: NA
+- isw was made/tested with MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
+- You can find documentation on the wiki: https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)
 - isw is only tested under Arch/systemd.
 - Use it at your own risk !
 
