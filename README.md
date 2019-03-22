@@ -29,21 +29,6 @@ isw was made as an equivalent of "control tools by pherein" but under linux.
 
 <b>NB: all option exept -h need priviledges.</b>
 
-/!\ GIF are outdated /!\
-
-<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif">
-	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif" width="427" height="480" border="10" />
-</a>
-<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-w.gif">
-	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-w.gif" width="427" height="480" border="10" />
-</a>
-<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-cwc.gif">
-	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-cwc.gif" width="427" height="480" border="10" />
-</a>
-<a href="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif">
-	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif" width="427" height="480" border="10" />
-</a>
-
 ### isw -c
 It check your EC with:
 ```
