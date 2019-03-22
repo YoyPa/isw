@@ -1,0 +1,72 @@
+#! /usr/bin/python3
+
+# IMPORTS
+import sys
+import os
+from optparse import OptionParser
+import configparser
+
+# VARIABLES GLOBALES
+EC_IO_FILE="/sys/kernel/debug/ec/ec0/io"
+CFG_FILE="/etc/isw.conf"
+DUMP_POS=""
+
+# FONCTIONS
+# option -w
+def ec_write(option, opt, value, parser):
+	global DUMP_POS
+	DUMP_POS="after modification"
+	print('\r')
+	with open(CFG_FILE) as cfgfile:
+		cfgp=configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		list_a = [0,0,0,0,0,0]
+		list_a[0] = int(cfgp.get(value, 'address_0'),16)
+		list_a[1] = int(cfgp.get(value, 'address_1'),16)
+		list_a[2] = int(cfgp.get(value, 'address_2'),16)
+		list_a[3] = int(cfgp.get(value, 'address_3'),16)
+		list_a[4] = int(cfgp.get(value, 'address_4'),16)
+		list_a[5] = int(cfgp.get(value, 'address_5'),16)
+		list_t = [0,0,0,0,0,0]
+		list_t[0] = int(cfgp.get(value, 'temp_0'))
+		list_t[1] = int(cfgp.get(value, 'temp_1'))
+		list_t[2] = int(cfgp.get(value, 'temp_2'))
+		list_t[3] = int(cfgp.get(value, 'temp_3'))
+		list_t[4] = int(cfgp.get(value, 'temp_4'))
+		list_t[5] = int(cfgp.get(value, 'temp_5'))
+	with open(EC_IO_FILE,"r+b") as file:
+		for i in range(6):
+			file.seek(list_a[i])
+			file.write(bytes((list_t[i],)))
+			print('Value '+hex(list_t[i])+'('+str(list_t[i])+'°C)'+' written at '+hex(list_a[i])+'(byte'+str(list_a[i])+')')
+
+# option -c
+def ec_check(option, opt, value, parser):
+	print('\nEC dump '+str(DUMP_POS))
+	print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
+	os.system("od -A x -t x1z "+str(EC_IO_FILE))
+
+def main():
+	# permet l'utilisation d'arguments
+	# callback permet l'appel d'une fonction
+	parser = OptionParser(epilog=
+"""--- TIPS --------------------------------------------------------------------
+-- Set your config in '/etc/isw.conf'.                                     --
+-- Arguments order is relevant, -c can be used twice. Example:             --
+-- isw -c -w [Profile] -c will show you EC dump before and after change.   --
+--- SUPPORT -----------------------------------------------------------------
+-- Please help me support more laptop by providing 'isw -c' output via:    --
+-- https://github.com/YoyPa/isw (open an issue).                           --
+--- NAME --------------------------------------------------------------------
+-- ISW is MSI at 180°                                                      --
+-- It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   --
+-----------------------------------------------------------------------------
+""")
+	parser.add_option("-w", action="callback", callback=ec_write, type="string",
+					  help="write into EC, replace W with profile name")
+	parser.add_option("-c", action="callback", callback=ec_check,
+					  help="show an EC dump")
+	(options, args) = parser.parse_args()
+
+if __name__ == "__main__":
+    main()
