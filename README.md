@@ -2,7 +2,7 @@
 
 ## Warning
 - isw was made/tested with MSI GS40 6QE, check that your EC (Embedded Controler) work the same way before trying.
-- You can find documentation on the wiki: https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)
+- You can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)">wiki</a>
 - isw is only tested under Arch/Manjaro (systemd).
 - Use it at your own risk !
 
@@ -14,7 +14,7 @@ isw was made as an equivalent of "control tools by pherein" but under linux.
 - <b>address</b> are in hex
 - <b>temp</b> are in °C.
 - EC contain 7 <b>temp</b>, 6 of them will be edited, last one is left at 0x64(100).
-- Profiles for supported laptops are located in <b>/etc/isw.conf</b>.
+- Profiles for supported laptops are located in <a href="https://github.com/YoyPa/isw/blob/master/etc/isw.conf">/etc/isw.conf</a>.
 
 ## How to use it ?
 - It need ```ec_sys``` module with option ```write_support=1```, there are two scenario to set that:
