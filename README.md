@@ -1,7 +1,7 @@
 # ISW / Ice-Sealed Wyvern
 
 ## Warning
-- isw was made/tested with MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
+- isw was made/tested with MSI GS40 6QE, check that your EC (Embedded Controler) work the same way before trying.
 - You can find documentation on the wiki: https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)
 - isw is only tested under Arch/Manjaro (systemd).
 - Use it at your own risk !
@@ -17,15 +17,17 @@ isw was made as an equivalent of "control tools by pherein" but under linux.
 - Profiles for supported laptops are located in <b>/etc/isw.conf</b>.
 
 ## How to use it ?
-- It need ```ec_sys``` module with option ```write_support=1```, there are to scenario to set that:
-  - 1.1 ec_sys is a builtin module, add ```ec_sys.write_support=1``` in ```/etc/default/grub``` (Arch AUR package can't do it for you).
-  - 1.2 then update your grub and reboot.
-  - 2.1 ec_sys is not a builtin module, copy both ```isw-ec_sys.conf``` files provided (/etc/foo) with same path (Arch AUR package will do it for you).
-  - 2.2 then reboot OR ```modprobe ec_sys write_support=1```.
-- Use option ```-c``` to read EC OR/AND ```-w [PROFILE_NAME]``` to write in EC.
+- It need ```ec_sys``` module with option ```write_support=1```, there are two scenario to set that:
+  - ec_sys is a builtin kernel module:
+    - add ```ec_sys.write_support=1``` in ```/etc/default/grub``` (Arch AUR package can't do it for you).
+    - then update your grub and reboot.
+  - ec_sys is not a builtin kernel module:
+    - copy both ```isw-ec_sys.conf``` files provided (/etc/foo) with same path (Arch AUR package will do it for you).
+    - then reboot OR ```modprobe ec_sys write_support=1```.
+- Use option ```-c``` to read EC <b>and/or</b> ```-w [PROFILE_NAME]``` to write in EC.
 - Option ```-c``` can be used alone or in conjuction with ```-w``` like ```-cw [foo]``` ```-w [foo] -c``` ```-cw [foo] -c``` to print EC before/after write or both.
 
-NB: all option exept -h need priviledges.
+<b>NB: all option exept -h need priviledges.</b>
 
 /!\ GIF are outdated /!\
 
