@@ -3,28 +3,31 @@
 ## Warning
 - isw was made/tested with MSI GS40 6QE, please verify that your EC (Embedded Controler) work the same way before trying.
 - You can find documentation on the wiki: https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)
-- isw is only tested under Arch/systemd.
+- isw is only tested under Arch/Manjaro (systemd).
 - Use it at your own risk !
 
 ## Purpose
 isw was made as an equivalent of "control tools by pherein" but under linux.
 
 ### In details
-- Replace value at ADDRESS,ADDRESS+1,...,ADDRESS+5.
-- The ADDRESS value will be replaced by VALUE and following one incremented by X (from VALUE).
-- VALUE correspond to °C.
-- X is the increment for VALUE.
-- In Short: Fan will start spinning at VALUE and increase speed every X °C.
-  
-NB: EC contain 7 values, only 6 of them are edited, last value is unchanged (100°C).
+- Replace <b>temp</b> at <b>address</b>,<b>address</b>+1,...,<b>address</b>+5.
+- <b>address</b> are in hex
+- <b>temp</b> are in °C.
+- EC contain 7 <b>temp</b>, 6 of them will be edited, last one is left at 0x64(100).
+- Profiles for supported laptops are located in <b>/etc/isw.conf</b>.
 
 ## How to use it ?
-- It's just a python script to launch with wanted options, you can have a list with `./isw.py -h`
-- It will need ec_sys module so you should use `isw -l` or `isw -ls` to load it (read below).
-- Then use options `-a -v -x` if you want to change default and `-w` to write in EC.
-- Option `-c` can be used alone or in conjuction with `-w` like `-cw -wc -cwc` to print EC before/after write or both.
+- It need ```ec_sys``` module with option ```write_support=1```, there are to scenario to set that:
+  - 1.1 ec_sys is a builtin module, add ```ec_sys.write_support=1``` in ```/etc/default/grub``` (Arch AUR package can't do it for you).
+  - 1.2 then update your grub and reboot.
+  - 2.1 ec_sys is not a builtin module, copy both ```isw-ec_sys.conf``` files provided (/etc/foo) with same path (Arch AUR package will do it for you).
+  - 2.2 then reboot OR ```modprobe ec_sys write_support=1```.
+- Use option ```-c``` to read EC OR/AND ```-w [PROFILE_NAME]``` to write in EC.
+- Option ```-c``` can be used alone or in conjuction with ```-w``` like ```-cw [foo]``` ```-w [foo] -c``` ```-cw [foo] -c``` to print EC before/after write or both.
 
 NB: all option exept -h need priviledges.
+
+/!\ GIF are outdated /!\
 
 <a href="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif">
 	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-c.gif" width="427" height="480" border="10" />
@@ -38,19 +41,6 @@ NB: all option exept -h need priviledges.
 <a href="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif">
 	<img src="https://github.com/YoyPa/isw/blob/master/gif/isw-h.gif" width="427" height="480" border="10" />
 </a>
-
-### isw -s
-It add the following for ec_sys to load at startup:
-```
-"ec_sys" > /etc/modules-load.d/isw-ec_sys.conf
-"options ec_sys write_support=1" > /etc/modprobe.d/isw-ec_sys.conf
-```
-
-### isw -l
-It load ec_sys directly with:
-```
-modprobe ec_sys write_support=1
-```
 
 ### isw -c
 It check your EC with:
