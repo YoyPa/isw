@@ -25,8 +25,8 @@ yay -S isw
 ```
 git clone https://github.com/YoyPa/isw
 ```
-- Then look at this <a href="https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=isw">PKGBUILD</a> to know where to put files.
-- /!\ Path can change a bit depending on the distro /!\
+  - Then look at this <a href="https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=isw">PKGBUILD</a> to know where to put files.
+  - /!\ Path can change a bit depending on the distro /!\
 
 ## How to use it ?
 - It need ```ec_sys``` module with option ```write_support=1```, there are two scenario to set that:
