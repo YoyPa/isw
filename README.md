@@ -39,7 +39,15 @@ od -A x -t x1z /sys/kernel/debug/ec/ec0/io
 It open EC: ```/sys/kernel/debug/ec/ec0/io```.
 Then seek to address_N and write temp_N Bytes.
 
+## Launch at startup
+you can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with <a href="https://github.com/YoyPa/isw/blob/master/usr/lib/systemd/system/isw@.service">isw@.service</a>(need priviledges):
+```
+systemctl enable isw@[PROFILE_NAME].service
+```
+
 ## TODO
-- Daemonisation ?
-	- Launch at startup
+```
+- Daemonisation
+	- Launch at startup								done
 	- Launch at event(power source change)
+```
