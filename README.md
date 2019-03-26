@@ -16,6 +16,18 @@ isw was made as an equivalent of "control tools by pherein" but under linux.
 - EC contain 7 <b>temp</b>, 6 of them will be edited, last one is left at 0x64(100).
 - Profiles for supported laptops are located in <a href="https://github.com/YoyPa/isw/blob/master/etc/isw.conf">/etc/isw.conf</a>.
 
+## How to install
+- If you are using archlinux or a derivative you can install it from AUR:
+```
+yay -S isw
+```
+- If you are on a different distro family:
+```
+git clone https://github.com/YoyPa/isw
+```
+- Then look at this <a href="https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=isw">PKGBUILD</a> to know where to put files.
+- /!\ Path can change a bit depending on the distro /!\
+
 ## How to use it ?
 - It need ```ec_sys``` module with option ```write_support=1```, there are two scenario to set that:
   - ec_sys is a builtin kernel module:
@@ -40,7 +52,7 @@ It open EC: ```/sys/kernel/debug/ec/ec0/io```.
 Then seek to address_N and write temp_N Bytes.
 
 ## Launch at startup
-You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with <a href="https://github.com/YoyPa/isw/blob/master/usr/lib/systemd/system/isw%40.service">isw@.service</a>(need priviledges):
+You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with isw@.service (need priviledges):
 ```
 systemctl enable isw@[PROFILE_NAME].service
 ```
