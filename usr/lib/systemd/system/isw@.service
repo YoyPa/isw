@@ -1,0 +1,9 @@
+[Unit]
+Description=ISW fan control service
+
+[Service]
+ExecStart=/usr/bin/isw -w %I
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
