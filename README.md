@@ -36,13 +36,16 @@ yay -S isw
     - then reboot OR ```modprobe ec_sys write_support=1```.
 - Use option ```-c``` to read EC <b>and/or</b> ```-w [PROFILE_NAME]``` to write in EC.
 - Option ```-c``` can be used alone or in conjuction with ```-w``` like ```-cw [foo]``` ```-w [foo] -c``` ```-cw [foo] -c``` to print EC before/after write or both.
-
+- Use ```isw -r [PROFILE_NAME]``` to show realtime temperaure and fan speed for CPU/GPU
 <b>NB: all option exept -h need priviledges.</b>
 
-### isw -c
-It check your EC with:
+### isw -r
+It show realtime temperature and fan speed for CPU and GPU from:
 ```
-od -A x -t x1z /sys/kernel/debug/ec/ec0/io
+realtime_cpu_temp_address
+realtime_cpu_fan_speed_address
+realtime_gpu_temp_address
+realtime_gpu_fan_speed_address
 ```
 
 ### isw -w
@@ -53,6 +56,12 @@ Then seek to address_N and write temp_N Bytes.
 You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with isw@.service (need priviledges):
 ```
 systemctl enable isw@[PROFILE_NAME].service
+```
+
+### isw -c
+It check your EC with:
+```
+od -A x -t x1z /sys/kernel/debug/ec/ec0/io
 ```
 
 ## TODO

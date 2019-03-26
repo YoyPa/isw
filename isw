@@ -12,6 +12,31 @@ CFG_FILE="/etc/isw.conf"
 DUMP_POS=""
 
 # FONCTIONS
+# option -r
+def ec_read(option, opt, value, parser):
+	with open(CFG_FILE) as cfgfile:
+		cfgp=configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		rcta = int(cfgp.get(value, 'realtime_cpu_temp_address'),16)
+		rcfsa = int(cfgp.get(value, 'realtime_cpu_fan_speed_address'),16)
+		rgta = int(cfgp.get(value, 'realtime_gpu_temp_address'),16)
+		rgfsa = int(cfgp.get(value, 'realtime_gpu_fan_speed_address'),16)
+	with open(EC_IO_FILE,"rb") as file:
+		file.seek(rcta)
+		temp_cpu = int(file.read(1).hex(),16)
+		file.seek(rcfsa)
+		fans_cpu = int(file.read(1).hex(),16)
+		file.seek(rgta)
+		temp_gpu = int(file.read(1).hex(),16)
+		file.seek(rgfsa)
+		fans_gpu = int(file.read(1).hex(),16)
+		print ("CPU")
+		print("└─temp     (°C): "+str(temp_cpu))
+		print("└─fan speed (%): "+str(fans_cpu))
+		print ("GPU")
+		print("└─temp     (°C): "+str(temp_gpu))
+		print("└─fan speed (%): "+str(fans_gpu))
+
 # option -w
 def ec_write(option, opt, value, parser):
 	global DUMP_POS
@@ -50,7 +75,8 @@ def main():
 	# permet l'utilisation d'arguments
 	# callback permet l'appel d'une fonction
 	parser = OptionParser(epilog=
-"""--- TIPS --------------------------------------------------------------------
+"""/!\ Replace capital letters with PROFILE_NAME /!\                          --
+--- TIPS --------------------------------------------------------------------
 -- Set your config in '/etc/isw.conf'.                                     --
 -- Arguments order is relevant, -c can be used twice. Example:             --
 -- isw -c -w [Profile] -c will show you EC dump before and after change.   --
@@ -62,8 +88,10 @@ def main():
 -- It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   --
 -----------------------------------------------------------------------------
 """)
+	parser.add_option("-r", action="callback", callback=ec_read, type="string",
+					  help="show realtime CPU+GPU temp and fan speed from EC")
 	parser.add_option("-w", action="callback", callback=ec_write, type="string",
-					  help="write into EC, replace W with profile name")
+					  help="write into EC")
 	parser.add_option("-c", action="callback", callback=ec_check,
 					  help="show an EC dump")
 	(options, args) = parser.parse_args()
