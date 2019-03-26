@@ -22,9 +22,7 @@ isw was made as an equivalent of "control tools by pherein" but under linux.
 yay -S isw
 ```
 - If you are on a different distro family:
-```
-git clone https://github.com/YoyPa/isw
-```
+  - Clone ```git clone https://github.com/YoyPa/isw```
   - Then look at this <a href="https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=isw">PKGBUILD</a> to know where to put files.
   - /!\ Path can change a bit depending on the distro /!\
 
