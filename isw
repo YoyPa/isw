@@ -3,17 +3,20 @@
 # IMPORTS
 import sys
 import os
-from optparse import OptionParser
+from argparse import ArgumentParser
+from argparse import Action
+from argparse import RawTextHelpFormatter
 import configparser
 
 # VARIABLES GLOBALES
 EC_IO_FILE="/sys/kernel/debug/ec/ec0/io"
 CFG_FILE="/etc/isw.conf"
 DUMP_POS=""
+list_s=[]
 
 # FONCTIONS
 # option -r
-def ec_read(option, opt, value, parser):
+def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
@@ -38,7 +41,7 @@ def ec_read(option, opt, value, parser):
 		print("└─fan speed (%): "+str(fans_gpu))
 
 # option -w
-def ec_write(option, opt, value, parser):
+def ec_write(value):
 	global DUMP_POS
 	DUMP_POS="after modification"
 	print('\r')
@@ -65,17 +68,31 @@ def ec_write(option, opt, value, parser):
 			file.write(bytes((list_t[i],)))
 			print('Value '+hex(list_t[i])+'('+str(list_t[i])+'°C)'+' written at '+hex(list_a[i])+'(byte'+str(list_a[i])+')')
 
+# option -s
+# argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
+def ec_set(value):
+	global list_s
+	list_s.append(value)
+	if len(list_s)==2:
+		with open(EC_IO_FILE,"r+b") as file:
+			file.seek(int(list_s[0],16))
+			file.write(bytes((int(list_s[1]),)))
+			print('\r')
+			print('Value '+hex(int(list_s[1]))+'('+str(list_s[1])+'°C)'+' written at '+list_s[0]+'(byte'+str(int(list_s[0],16))+')')
+
 # option -c
-def ec_check(option, opt, value, parser):
-	print('\nEC dump '+str(DUMP_POS))
-	print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
-	os.system("od -A x -t x1z "+str(EC_IO_FILE))
+class ec_checkC(Action):
+	def __call__(self, parser, namespace, values, option_string=None):
+		print('\nEC dump '+str(DUMP_POS))
+		print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
+		os.system("od -A x -t x1z "+str(EC_IO_FILE))
 
 def main():
 	# permet l'utilisation d'arguments
-	# callback permet l'appel d'une fonction
-	parser = OptionParser(epilog=
-"""/!\ Replace capital letters with PROFILE_NAME /!\                          --
+	# type permet de lancer une fonction en passant obligatoirement un argument
+	# sans argument, créer une class est nécessaire (c'est nul :D)
+	parser = ArgumentParser(formatter_class=RawTextHelpFormatter, epilog=
+"""
 --- TIPS --------------------------------------------------------------------
 -- Set your config in '/etc/isw.conf'.                                     --
 -- Arguments order is relevant, -c can be used twice. Example:             --
@@ -87,14 +104,17 @@ def main():
 -- ISW is MSI at 180°                                                      --
 -- It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   --
 -----------------------------------------------------------------------------
-""")
-	parser.add_option("-r", action="callback", callback=ec_read, type="string",
-					  help="show realtime CPU+GPU temp and fan speed from EC")
-	parser.add_option("-w", action="callback", callback=ec_write, type="string",
-					  help="write into EC")
-	parser.add_option("-c", action="callback", callback=ec_check,
-					  help="show an EC dump")
-	(options, args) = parser.parse_args()
+"""
+	)
+	parser.add_argument("-r", type=ec_read,
+						help="┬ show realtime CPU+GPU temp and fan speed from EC\n└ replace R with PROFILE_NAME")
+	parser.add_argument("-w", type=ec_write,
+						help="┬ write into EC\n└ replace W with PROFILE_NAME")
+	parser.add_argument("-s", type=ec_set, nargs=2,
+						help="┬ set a single value into EC\n└ replace first S with address(hex) second S with value(dec)")
+	parser.add_argument("-c", action=ec_checkC, nargs=0,
+						help="─ show an EC dump")
+	parser.parse_args()
 
 if __name__ == "__main__":
     main()

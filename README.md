@@ -52,16 +52,16 @@ realtime_gpu_fan_speed_address
 It open EC: ```/sys/kernel/debug/ec/ec0/io```.
 Then seek to address_N and write temp_N Bytes.
 
-## Launch at startup
-You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with isw@.service (need priviledges):
-```
-systemctl enable isw@[PROFILE_NAME].service
-```
-
 ### isw -c
 It check your EC with:
 ```
 od -A x -t x1z /sys/kernel/debug/ec/ec0/io
+```
+
+## Launch at startup
+You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with isw@.service (need priviledges):
+```
+systemctl enable isw@[PROFILE_NAME].service
 ```
 
 ## TODO
