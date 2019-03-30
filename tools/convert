@@ -1,0 +1,5 @@
+#! /usr/bin/python3
+
+a = ["1e","32","3c","4b","4b","4b","4b"]
+for i in range (7):
+	print (int(a[i],16))

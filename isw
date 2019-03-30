@@ -48,13 +48,13 @@ def ec_write(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		list_a = [0,0,0,0,0,0]
-		list_a[0] = int(cfgp.get(value, 'address_0'),16)
-		list_a[1] = int(cfgp.get(value, 'address_1'),16)
-		list_a[2] = int(cfgp.get(value, 'address_2'),16)
-		list_a[3] = int(cfgp.get(value, 'address_3'),16)
-		list_a[4] = int(cfgp.get(value, 'address_4'),16)
-		list_a[5] = int(cfgp.get(value, 'address_5'),16)
+		list_ta = [0,0,0,0,0,0]
+		list_ta[0] = int(cfgp.get(value, 'temp_address_0'),16)
+		list_ta[1] = int(cfgp.get(value, 'temp_address_1'),16)
+		list_ta[2] = int(cfgp.get(value, 'temp_address_2'),16)
+		list_ta[3] = int(cfgp.get(value, 'temp_address_3'),16)
+		list_ta[4] = int(cfgp.get(value, 'temp_address_4'),16)
+		list_ta[5] = int(cfgp.get(value, 'temp_address_5'),16)
 		list_t = [0,0,0,0,0,0]
 		list_t[0] = int(cfgp.get(value, 'temp_0'))
 		list_t[1] = int(cfgp.get(value, 'temp_1'))
@@ -62,11 +62,33 @@ def ec_write(value):
 		list_t[3] = int(cfgp.get(value, 'temp_3'))
 		list_t[4] = int(cfgp.get(value, 'temp_4'))
 		list_t[5] = int(cfgp.get(value, 'temp_5'))
+		list_fsa = [0,0,0,0,0,0,0]
+		list_fsa[0] = int(cfgp.get(value, 'fan_speed_address_0'),16)
+		list_fsa[1] = int(cfgp.get(value, 'fan_speed_address_1'),16)
+		list_fsa[2] = int(cfgp.get(value, 'fan_speed_address_2'),16)
+		list_fsa[3] = int(cfgp.get(value, 'fan_speed_address_3'),16)
+		list_fsa[4] = int(cfgp.get(value, 'fan_speed_address_4'),16)
+		list_fsa[5] = int(cfgp.get(value, 'fan_speed_address_5'),16)
+		list_fsa[6] = int(cfgp.get(value, 'fan_speed_address_6'),16)
+		list_fs = [0,0,0,0,0,0,0]
+		list_fs[0] = int(cfgp.get(value, 'fan_speed_0'))
+		list_fs[1] = int(cfgp.get(value, 'fan_speed_1'))
+		list_fs[2] = int(cfgp.get(value, 'fan_speed_2'))
+		list_fs[3] = int(cfgp.get(value, 'fan_speed_3'))
+		list_fs[4] = int(cfgp.get(value, 'fan_speed_4'))
+		list_fs[5] = int(cfgp.get(value, 'fan_speed_5'))
+		list_fs[6] = int(cfgp.get(value, 'fan_speed_6'))
 	with open(EC_IO_FILE,"r+b") as file:
+		print("cpu_temp:")
 		for i in range(6):
-			file.seek(list_a[i])
+			file.seek(list_ta[i])
 			file.write(bytes((list_t[i],)))
-			print('Value '+hex(list_t[i])+'('+str(list_t[i])+'°C)'+' written at '+hex(list_a[i])+'(byte'+str(list_a[i])+')')
+			print('Value '+hex(list_t[i])+'('+str(list_t[i])+'°C)'+' written at '+hex(list_ta[i])+'(byte'+str(list_ta[i])+')')
+		print("cpu_fan_speed:")
+		for i in range(7):
+			file.seek(list_fsa[i])
+			file.write(bytes((list_fs[i],)))
+			print('Value '+hex(list_fs[i])+'('+str(list_fs[i])+'°C)'+' written at '+hex(list_fsa[i])+'(byte'+str(list_fsa[i])+')')
 
 # option -s
 # argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
