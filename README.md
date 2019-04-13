@@ -2,20 +2,16 @@
 
 ## Warning
 - isw was made/tested with MSI GS40 6QE, other laptops depend on user contribution and can't be tested by myself.
-- Check that your EC (Embedded Controler) work the same way before trying.
+- Check that your EC (Embedded Controler) work the same way.
 - You can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)">wiki</a>.
 - isw is only tested under Arch/Manjaro (systemd).
 - Use it at your own risk !
 
 ## Purpose
-isw was made as an equivalent of "control tools by pherein" but under linux.
-
-### In details
-- Replace <b>temp/fan_speed</b> at <b>temp/fan_speed_address</b>,<b>temp/fan_speed_address</b>+1,[...],<b>temp/fan_speed_address</b>+5.
-- <b>temp/fan_speed_address</b> are in hex.
-- <b>temp/fan_speed</b> are in °C/%.
-- EC contain 7 <b>temp</b>, 6 of them will be edited, last one is left at 0x64(100).
+- isw was made as an equivalent of "control tools by pherein" but under linux.
+- It is meant to alter fan profiles for MSI laptops.
 - Profiles for supported laptops are located in <a href="https://github.com/YoyPa/isw/blob/master/etc/isw.conf">/etc/isw.conf</a>.
+- Check <a href="https://github.com/YoyPa/isw/blob/master/etc/isw.conf">/etc/isw.conf</a>. comment for more details.
 
 ## How to install
 ### Package or not package ?
@@ -54,7 +50,7 @@ optional arguments:
 --- TIPS --------------------------------------------------------------------
 -- Set your config in '/etc/isw.conf'.                                     --
 -- Arguments order is relevant, -c can be used twice. Example:             --
--- isw -c -w [Profile] -c will show you EC dump before and after change.   --
+-- isw -c -w PROFILE_NAME -c will show you EC dump before and after change.--
 -----------------------------------------------------------------------------
 ```
 <b>NB: all option exept -h need priviledges.</b>
