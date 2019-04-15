@@ -88,7 +88,7 @@ def ec_write(value):
 		for i in range(7):
 			file.seek(list_fsa[i])
 			file.write(bytes((list_fs[i],)))
-			print('Value '+hex(list_fs[i])+'('+str(list_fs[i])+'°C)'+' written at '+hex(list_fsa[i])+'(byte'+str(list_fsa[i])+')')
+			print('Value '+hex(list_fs[i])+'('+str(list_fs[i])+'%)'+' written at '+hex(list_fsa[i])+'(byte'+str(list_fsa[i])+')')
 
 # option -s
 # argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
