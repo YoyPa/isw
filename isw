@@ -59,19 +59,13 @@ def ec_write(value):
 		list_gfs = []
 		for i in range(6):
 			list_cta.append(int(cfgp.get(value, 'cpu_temp_address_'+str(i)),16))
-		for i in range(6):
 			list_ct.append(int(cfgp.get(value, 'cpu_temp_'+str(i))))
-		for i in range(7):
-			list_cfsa.append(int(cfgp.get(value, 'cpu_fan_speed_address_'+str(i)),16))
-		for i in range(7):
-			list_cfs.append(int(cfgp.get(value, 'cpu_fan_speed_'+str(i))))
-		for i in range(6):
 			list_gta.append(int(cfgp.get(value, 'gpu_temp_address_'+str(i)),16))
-		for i in range(6):
 			list_gt.append(int(cfgp.get(value, 'gpu_temp_'+str(i))))
 		for i in range(7):
+			list_cfsa.append(int(cfgp.get(value, 'cpu_fan_speed_address_'+str(i)),16))
+			list_cfs.append(int(cfgp.get(value, 'cpu_fan_speed_'+str(i))))
 			list_gfsa.append(int(cfgp.get(value, 'gpu_fan_speed_address_'+str(i)),16))
-		for i in range(7):
 			list_gfs.append(int(cfgp.get(value, 'gpu_fan_speed_'+str(i))))
 	with open(EC_IO_FILE,"r+b") as file:
 		print("cpu_temp:")
