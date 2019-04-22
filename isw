@@ -33,10 +33,10 @@ def ec_read(value):
 		temp_gpu = int(file.read(1).hex(),16)
 		file.seek(rgfsa)
 		fans_gpu = int(file.read(1).hex(),16)
-		print ("CPU")
+		print("CPU")
 		print("└─temp     (°C): "+str(temp_cpu))
 		print("└─fan speed (%): "+str(fans_cpu))
-		print ("GPU")
+		print("GPU")
 		print("└─temp     (°C): "+str(temp_gpu))
 		print("└─fan speed (%): "+str(fans_gpu))
 
@@ -57,37 +57,49 @@ def ec_write(value):
 		list_gt = []
 		list_gfsa = []
 		list_gfs = []
-		for i in range(6):
-			list_cta.append(int(cfgp.get(value, 'cpu_temp_address_'+str(i)),16))
-			list_ct.append(int(cfgp.get(value, 'cpu_temp_'+str(i))))
-			list_gta.append(int(cfgp.get(value, 'gpu_temp_address_'+str(i)),16))
-			list_gt.append(int(cfgp.get(value, 'gpu_temp_'+str(i))))
 		for i in range(7):
+			if i<6:
+				list_cta.append(int(cfgp.get(value, 'cpu_temp_address_'+str(i)),16))
+				list_ct.append(int(cfgp.get(value, 'cpu_temp_'+str(i))))
+				list_gta.append(int(cfgp.get(value, 'gpu_temp_address_'+str(i)),16))
+				list_gt.append(int(cfgp.get(value, 'gpu_temp_'+str(i))))
 			list_cfsa.append(int(cfgp.get(value, 'cpu_fan_speed_address_'+str(i)),16))
 			list_cfs.append(int(cfgp.get(value, 'cpu_fan_speed_'+str(i))))
 			list_gfsa.append(int(cfgp.get(value, 'gpu_fan_speed_address_'+str(i)),16))
 			list_gfs.append(int(cfgp.get(value, 'gpu_fan_speed_'+str(i))))
 	with open(EC_IO_FILE,"r+b") as file:
-		print("cpu_temp:")
 		for i in range(6):
 			file.seek(list_cta[i])
 			file.write(bytes((list_ct[i],)))
-			print('Value '+hex(list_ct[i])+'('+str(list_ct[i])+'°C)'+' written at '+hex(list_cta[i])+'(byte'+str(list_cta[i])+')')
-		print("cpu_fan_speed:")
+			file.seek(list_gta[i])
+			file.write(bytes((list_gt[i],)))
+			if i==0:
+				print('------------CPU----------    ----------GPU------------')
+				print('\x1b[0;32;1m'+"%-11s %-16s %-11s %s" %(
+					'Value',
+					'set @ address',
+					'Value',
+					'set @ address'
+				)+'\x1b[0m')
+			print("%-11s %-16s %-11s %s" %(
+				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
+				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
+				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
+				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
+			))
 		for i in range(7):
 			file.seek(list_cfsa[i])
 			file.write(bytes((list_cfs[i],)))
-			print('Value '+hex(list_cfs[i])+'('+str(list_cfs[i])+'%)'+' written at '+hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')')
-		print("gpu_temp:")
-		for i in range(6):
-			file.seek(list_gta[i])
-			file.write(bytes((list_gt[i],)))
-			print('Value '+hex(list_gt[i])+'('+str(list_gt[i])+'°C)'+' written at '+hex(list_gta[i])+'(byte'+str(list_gta[i])+')')
-		print("gpu_fan_speed:")
-		for i in range(7):
 			file.seek(list_gfsa[i])
 			file.write(bytes((list_gfs[i],)))
-			print('Value '+hex(list_gfs[i])+'('+str(list_gfs[i])+'%)'+' written at '+hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')')
+			if i==0:
+				print('\r')
+			print("%-11s %-16s %-11s %s" %(
+				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
+				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
+				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
+				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
+			))
 
 # option -s
 # argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
