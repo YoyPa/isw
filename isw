@@ -111,7 +111,14 @@ def ec_set(value):
 			file.seek(int(list_s[0],16))
 			file.write(bytes((int(list_s[1]),)))
 			print('\r')
-			print('Value '+hex(int(list_s[1]))+'('+str(list_s[1])+'°C)'+' written at '+list_s[0]+'(byte'+str(int(list_s[0],16))+')')
+			print('\x1b[0;32;1m'+"%-11s %s" %(
+				'Value',
+				'set @ address'
+			)+'\x1b[0m')
+			print("%-11s %s" %(
+				hex(int(list_s[1]))+'('+str(list_s[1])+')',
+				list_s[0]+'(byte'+str(int(list_s[0],16))+')'
+			))
 
 # option -c
 class ec_checkC(Action):
