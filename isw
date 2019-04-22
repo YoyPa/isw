@@ -53,13 +53,13 @@ def ec_write(value):
 		list_fsa = []
 		list_fs = []
 		for i in range(6):
-			list_ta.append(int(cfgp.get(value, 'temp_address_'+str(i)),16))
+			list_ta.append(int(cfgp.get(value, 'cpu_temp_address_'+str(i)),16))
 		for i in range(6):
-			list_t.append(int(cfgp.get(value, 'temp_'+str(i))))
+			list_t.append(int(cfgp.get(value, 'cpu_temp_'+str(i))))
 		for i in range(7):
-			list_fsa.append(int(cfgp.get(value, 'fan_speed_address_'+str(i)),16))
+			list_fsa.append(int(cfgp.get(value, 'cpu_fan_speed_address_'+str(i)),16))
 		for i in range(7):
-			list_fs.append(int(cfgp.get(value, 'fan_speed_'+str(i))))
+			list_fs.append(int(cfgp.get(value, 'cpu_fan_speed_'+str(i))))
 	with open(EC_IO_FILE,"r+b") as file:
 		print("cpu_temp:")
 		for i in range(6):
