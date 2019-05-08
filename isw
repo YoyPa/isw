@@ -3,10 +3,10 @@
 # IMPORTS
 import sys
 import os
+import configparser
 from argparse import ArgumentParser
 from argparse import Action
 from argparse import RawTextHelpFormatter
-import configparser
 
 # VARIABLES GLOBALES
 EC_IO_FILE="/sys/kernel/debug/ec/ec0/io"
@@ -15,6 +15,62 @@ DUMP_POS=""
 list_s=[]
 
 # FONCTIONS
+# option -p
+def ec_profile(value):
+	print('\nProfile dump '+str(DUMP_POS))
+	with open(CFG_FILE) as cfgfile:
+		cfgp=configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		# c=cpu g=gpu t=temp fs=fanspeed a=address p=profile r=realtime
+		list_cta = []
+		list_ct = []
+		list_cfsa = []
+		list_cfs = []
+		list_gta = []
+		list_gt = []
+		list_gfsa = []
+		list_gfs = []
+		ap = cfgp.get(value, 'address_profile')
+		for i in range(7):
+			if i<6:
+				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
+				list_gta.append(int(cfgp.get(ap, 'gpu_temp_address_'+str(i)),16))
+			list_cfsa.append(int(cfgp.get(ap, 'cpu_fan_speed_address_'+str(i)),16))
+			list_gfsa.append(int(cfgp.get(ap, 'gpu_fan_speed_address_'+str(i)),16))
+	with open(EC_IO_FILE,"r+b") as file:
+		for i in range(6):
+			file.seek(list_cta[i])
+			list_ct.append(int(file.read(1).hex(),16))
+			file.seek(list_gta[i])
+			list_gt.append(int(file.read(1).hex(),16))
+			if i==0:
+				print('-----------CPU-----------    -----------GPU-----------')
+				print('\x1b[0;32;1m'+"%-11s %-16s %-11s %s" %(
+					'Value',
+					'set @ address',
+					'Value',
+					'set @ address'
+				)+'\x1b[0m')
+			print("%-11s %-16s %-11s %s" %(
+				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
+				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
+				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
+				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
+			))
+		for i in range(7):
+			file.seek(list_cfsa[i])
+			list_cfs.append(int(file.read(1).hex(),16))
+			file.seek(list_gfsa[i])
+			list_gfs.append(int(file.read(1).hex(),16))
+			if i==0:
+				print('\r')
+			print("%-11s %-16s %-11s %s" %(
+				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
+				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
+				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
+				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
+			))
+
 # option -r
 def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
@@ -46,7 +102,7 @@ def ec_read(value):
 def ec_write(value):
 	global DUMP_POS
 	DUMP_POS="after modification"
-	print('\r')
+	print('\nWriting config to EC')
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
@@ -149,6 +205,8 @@ def main():
 -----------------------------------------------------------------------------
 """
 	)
+	parser.add_argument("-p", type=ec_profile,
+						help="┬ show current profile in EC\n└ replace P with PROFILE_NAME")
 	parser.add_argument("-r", type=ec_read,
 						help="┬ show realtime CPU+GPU temp and fan speed from EC\n└ replace R with PROFILE_NAME")
 	parser.add_argument("-w", type=ec_write,
