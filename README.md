@@ -36,23 +36,37 @@ yay -S isw
 
 ## How to use it ?
 ```
-usage: isw [-h] [-r R] [-w W] [-s S S] [-c]
+usage: isw [-h] [-p P] [-r R] [-w W] [-s S S] [-c]
 
 optional arguments:
   -h, --help  show this help message and exit
+  -p P        ┬ show current profile in EC
+              └ replace P with PROFILE_NAME
+
   -r R        ┬ show realtime CPU+GPU temp and fan speed from EC
               └ replace R with PROFILE_NAME
+
   -w W        ┬ write into EC
               └ replace W with PROFILE_NAME
+
   -s S S      ┬ set a single value into EC
-              └ replace first S with address(hex) second S with value(dec)
+              ├ replace 1st S with ADDRESS in hexadecimal (0x00)
+              └ replace 2nd S with VALUE   in decimal     (00)
+
   -c          ─ show an EC dump
 
---- TIPS --------------------------------------------------------------------
--- Set your config in '/etc/isw.conf'.                                     --
--- Arguments order is relevant, -c can be used twice. Example:             --
--- isw -c -w PROFILE_NAME -c will show you EC dump before and after change.--
------------------------------------------------------------------------------
+┌─ TIPS ──────────────────────────────────────────────────────────────────┐
+│ Set your config in '/etc/isw.conf'.                                     │
+│ Arguments order is relevant, -c and -p can be used twice. Example:      │
+│ isw -cw PROFILE_NAME -c will show you EC dump before and after change.  │
+├─ SUPPORT ───────────────────────────────────────────────────────────────┤
+│ Help me support your laptop by providing following command output:      │
+│ isw -cp MSI_ADDRESS_DEFAULT                                             │
+│ via https://github.com/YoyPa/isw (open an issue).                       │
+├─ NAME ──────────────────────────────────────────────────────────────────┤
+│ ISW is MSI at 180°                                                      │
+│ It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   │
+└─────────────────────────────────────────────────────────────────────────┘
 ```
 <b>NB: all option exept -h need priviledges.</b>
 

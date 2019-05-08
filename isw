@@ -192,27 +192,33 @@ def main():
 	# sans argument, créer une class est nécessaire (c'est nul :D)
 	parser = ArgumentParser(formatter_class=RawTextHelpFormatter, epilog=
 """
---- TIPS --------------------------------------------------------------------
--- Set your config in '/etc/isw.conf'.                                     --
--- Arguments order is relevant, -c can be used twice. Example:             --
--- isw -c -w [Profile] -c will show you EC dump before and after change.   --
---- SUPPORT -----------------------------------------------------------------
--- Please help me support more laptop by providing 'isw -c' output via:    --
--- https://github.com/YoyPa/isw (open an issue).                           --
---- NAME --------------------------------------------------------------------
--- ISW is MSI at 180°                                                      --
--- It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   --
------------------------------------------------------------------------------
+┌─ TIPS ──────────────────────────────────────────────────────────────────┐
+│ Set your config in '/etc/isw.conf'.                                     │
+│ Arguments order is relevant, -c and -p can be used twice. Example:      │
+│ isw -cw \033[4mPROFILE_NAME\033[0m -c will show you EC dump before and after change.  │
+├─ SUPPORT ───────────────────────────────────────────────────────────────┤
+│ Help me support your laptop by providing following command output:      │
+│ isw -cp MSI_ADDRESS_DEFAULT                                             │
+│ via https://github.com/YoyPa/isw (open an issue).                       │
+├─ NAME ──────────────────────────────────────────────────────────────────┤
+│ ISW is MSI at 180°                                                      │
+│ It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   │
+└─────────────────────────────────────────────────────────────────────────┘
 """
 	)
 	parser.add_argument("-p", type=ec_profile,
-						help="┬ show current profile in EC\n└ replace P with PROFILE_NAME")
+						help="┬ show current profile in EC\n"
+						     "└ replace \033[4mP\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
 	parser.add_argument("-r", type=ec_read,
-						help="┬ show realtime CPU+GPU temp and fan speed from EC\n└ replace R with PROFILE_NAME")
+						help="┬ show realtime CPU+GPU temp and fan speed from EC\n"
+							 "└ replace \033[4mR\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
 	parser.add_argument("-w", type=ec_write,
-						help="┬ write into EC\n└ replace W with PROFILE_NAME")
+						help="┬ write into EC\n"
+						     "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
 	parser.add_argument("-s", type=ec_set, nargs=2,
-						help="┬ set a single value into EC\n└ replace first S with address(hex) second S with value(dec)")
+						help="┬ set a single value into EC\n"
+						     "├ replace 1st \033[4mS\033[0m with \033[4mADDRESS\033[0m in hexadecimal (0x00)\n"
+						     "└ replace 2nd \033[4mS\033[0m with \033[4mVALUE\033[0m   in decimal     (00)\n ")
 	parser.add_argument("-c", action=ec_checkC, nargs=0,
 						help="─ show an EC dump")
 	parser.parse_args()
