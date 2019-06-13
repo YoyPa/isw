@@ -1,5 +1,0 @@
-#! /usr/bin/python3
-
-a = ["20","20","2a","37","42","4c","64"]
-for i in range (7):
-	print (int(a[i],16))
