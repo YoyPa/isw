@@ -76,7 +76,7 @@ def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp fs=fanspeed a=address p=profile r=realtime
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode
 		ap = cfgp.get(value, 'address_profile')
 		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
@@ -106,7 +106,7 @@ def ec_write(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp fs=fanspeed a=address p=profile r=realtime
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -116,6 +116,8 @@ def ec_write(value):
 		list_gfsa = []
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
+		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
+		fm = int(cfgp.get(value, 'fan_mode'))
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -127,6 +129,8 @@ def ec_write(value):
 			list_gfsa.append(int(cfgp.get(ap, 'gpu_fan_speed_address_'+str(i)),16))
 			list_gfs.append(int(cfgp.get(value, 'gpu_fan_speed_'+str(i))))
 	with open(EC_IO_FILE,"r+b") as file:
+		file.seek(fma)
+		file.write(bytes((fm,)))
 		for i in range(6):
 			file.seek(list_cta[i])
 			file.write(bytes((list_ct[i],)))

@@ -1,9 +1,11 @@
 [Unit]
 Description=ISW fan control service
+After=sleep.target
 
 [Service]
+ExecStartPre=/usr/bin/sleep 2
 ExecStart=/usr/bin/isw -w %I
 Type=oneshot
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=multi-user.target sleep.target
