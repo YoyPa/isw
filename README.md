@@ -36,7 +36,7 @@ yay -S isw
 
 ## How to use it ?
 ```
-usage: isw [-h] [-p P] [-r R] [-w W] [-s S S] [-c]
+usage: isw [-h] [-p P] [-r R] [-w W] [-s S S] [-b B B] [-c]
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -52,6 +52,10 @@ optional arguments:
   -s S S      ┬ set a single value into EC
               ├ replace 1st S with ADDRESS in hexadecimal (0x00)
               └ replace 2nd S with VALUE   in decimal     (00)
+
+  -b B B      ┬ activate or disable CoolerBoost
+              ├ replace 1st B with PROFILE_NAME
+              └ replace 2nd B with on OR off
 
   -c          ─ show an EC dump
 
@@ -71,8 +75,8 @@ optional arguments:
 <b>NB: all option exept -h need priviledges.</b>
 
 
-## Launch at startup
-You can launch ```isw -w [PROFILE_NAME]``` at startup via systemd with isw@.service (need priviledges):
+## Launch at startup/resume
+You can launch ```isw -w [PROFILE_NAME]``` at startup/resume via systemd with isw@.service (need priviledges):
 ```
 systemctl enable isw@[PROFILE_NAME].service
 ```
@@ -81,6 +85,6 @@ systemctl enable isw@[PROFILE_NAME].service
 ```
 - Daemonisation
 	- Launch at startup                            done
-	- launch after resume (hibernation/suspend)    looking into it
+	- launch after resume (hibernation/suspend)    done
 	- Launch at event(power source change)         seems hard to achieve
 ```

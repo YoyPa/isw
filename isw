@@ -13,6 +13,7 @@ EC_IO_FILE="/sys/kernel/debug/ec/ec0/io"
 CFG_FILE="/etc/isw.conf"
 DUMP_POS=""
 list_s=[]
+list_b=[]
 
 # FONCTIONS
 # option -p
@@ -21,7 +22,7 @@ def ec_profile(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp fs=fanspeed a=address p=profile r=realtime
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -76,7 +77,7 @@ def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
 		ap = cfgp.get(value, 'address_profile')
 		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
@@ -106,7 +107,7 @@ def ec_write(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -183,6 +184,47 @@ def ec_set(value):
 				list_s[0]+'(byte'+str(int(list_s[0],16))+')'
 			))
 
+# option -b
+# argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
+def ec_boost(value):
+	global list_b
+	list_b.append(value)
+	if len(list_b)==2:
+		with open(CFG_FILE) as cfgfile:
+			cfgp=configparser.ConfigParser()
+			cfgp.read_file(cfgfile)
+			# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
+			ap = cfgp.get(list_b[0], 'address_profile')
+			cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
+			cb = int(cfgp.get(list_b[0], 'cooler_boost'))
+		with open(EC_IO_FILE,"r+b") as file:
+			if list_b[1]=='on':
+				file.seek(cba)
+				file.write(bytes((cb,)))
+				print('\r')
+				print('\x1b[0;32;1m'+"%-11s %s" %(
+					'Value',
+					'set @ address'
+				)+'\x1b[0m')
+				print("%-11s %s" %(
+					hex(cb)+'('+str(cb)+')',
+					hex(cba)+'(byte'+str(cba)+')'
+				))
+			elif list_b[1]=='off':
+				file.seek(cba)
+				file.write(bytes((int(0),)))
+				print('\r')
+				print('\x1b[0;32;1m'+"%-11s %s" %(
+					'Value',
+					'set @ address'
+				)+'\x1b[0m')
+				print("%-11s %s" %(
+					hex(0)+'('+str(0)+')',
+					hex(cba)+'(byte'+str(cba)+')'
+				))
+			else:
+				print('Error: Only \033[4mon\033[0m and \033[4moff\033[0m are valid.')
+
 # option -c
 class ec_checkC(Action):
 	def __call__(self, parser, namespace, values, option_string=None):
@@ -223,6 +265,10 @@ def main():
 						help="┬ set a single value into EC\n"
 						     "├ replace 1st \033[4mS\033[0m with \033[4mADDRESS\033[0m in hexadecimal (0x00)\n"
 						     "└ replace 2nd \033[4mS\033[0m with \033[4mVALUE\033[0m   in decimal     (00)\n ")
+	parser.add_argument("-b", type=ec_boost, nargs=2,
+						help="┬ activate or disable CoolerBoost\n"
+						     "├ replace 1st \033[4mB\033[0m with \033[4mPROFILE_NAME\033[0m\n"
+						     "└ replace 2nd \033[4mB\033[0m with \033[4mon\033[0m OR \033[4moff\033[0m\n ")
 	parser.add_argument("-c", action=ec_checkC, nargs=0,
 						help="─ show an EC dump")
 	parser.parse_args()
