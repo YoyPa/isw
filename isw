@@ -32,6 +32,7 @@ def ec_profile(value):
 		list_gfsa = []
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
+		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -39,6 +40,24 @@ def ec_profile(value):
 			list_cfsa.append(int(cfgp.get(ap, 'cpu_fan_speed_address_'+str(i)),16))
 			list_gfsa.append(int(cfgp.get(ap, 'gpu_fan_speed_address_'+str(i)),16))
 	with open(EC_IO_FILE,"r+b") as file:
+		file.seek(fma)
+		fm = int(file.read(1).hex(),16)
+		if fm==int(140):
+			sfm='Advanced'
+		elif fm==int(76):
+			sfm='Basic'
+		elif fm==int(12):
+			sfm='Auto'
+		print('\x1b[0;32;1m'+"%-11s %-16s %s" %(
+				'Value',
+				'set @ address',
+				'Fan mode'
+		)+'\x1b[0m')
+		print("%-11s %-16s %s" %(
+			hex(fm)+'('+str(fm)+')',
+			hex(fma)+'(byte'+str(fma)+')',
+			sfm+'\n'
+		))
 		for i in range(6):
 			file.seek(list_cta[i])
 			list_ct.append(int(file.read(1).hex(),16))
@@ -103,7 +122,7 @@ def ec_read(value):
 def ec_write(value):
 	global DUMP_POS
 	DUMP_POS="after modification"
-	print('\nWriting config to EC')
+	print('\nWriting config to EC...')
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
@@ -132,6 +151,22 @@ def ec_write(value):
 	with open(EC_IO_FILE,"r+b") as file:
 		file.seek(fma)
 		file.write(bytes((fm,)))
+		if fm==int(140):
+			sfm='Advanced'
+		elif fm==int(76):
+			sfm='Basic'
+		elif fm==int(12):
+			sfm='Auto'
+		print('\x1b[0;32;1m'+"%-11s %-16s %s" %(
+				'Value',
+				'set @ address',
+				'Fan mode'
+		)+'\x1b[0m')
+		print("%-11s %-16s %s" %(
+			hex(fm)+'('+str(fm)+')',
+			hex(fma)+'(byte'+str(fma)+')',
+			sfm+'\n'
+		))
 		for i in range(6):
 			file.seek(list_cta[i])
 			file.write(bytes((list_ct[i],)))
