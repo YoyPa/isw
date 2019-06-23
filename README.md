@@ -1,5 +1,5 @@
 # ISW / Ice-Sealed Wyvern
-<img src="https://github.com/YoyPa/isw/blob/master/image/isw.svg" alt="" width="30%" align="right">
+<img src="https://github.com/YoyPa/isw/blob/master/image/isw.svg" alt="" width="25%" align="right">
 
 - isw started as an equivalent of "control tools by pherein" but under linux.
 - It is meant to alter fan profiles of MSI laptops.
@@ -7,12 +7,10 @@
 - Check <a href="https://github.com/YoyPa/isw/blob/master/etc/isw.conf">/etc/isw.conf</a>. comments for more details.
 
 ## Warning
-- isw is made/tested with MSI GS40 6QE, other laptops depend on user contribution and can't be tested by myself.
-- Check that your EC (Embedded Controler) work the same way.
-- You can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)">wiki</a>.
-- isw is only tested under Arch/Manjaro (systemd).
 - Use it at your own risk !
 - Secure boot can prevent access to the EC
+- isw is made/tested with MSI GS40 6QE under Arch/Manjaro, other laptops depend on user contribution and can't be tested by myself.
+- Check that your EC (Embedded Controler) work the same way, you can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)">wiki</a>.
 
 ## How to install
 ### Package or not package ?
