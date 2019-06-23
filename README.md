@@ -1,5 +1,5 @@
 # ISW / Ice-Sealed Wyvern
-
+<img src="https://github.com/YoyPa/isw/blob/master/image/isw.svg" alt="" width="30%" align="right">
 ## Warning
 - isw was made/tested with MSI GS40 6QE, other laptops depend on user contribution and can't be tested by myself.
 - Check that your EC (Embedded Controler) work the same way.
