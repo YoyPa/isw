@@ -9,7 +9,7 @@
 ## Warning
 - Use it at your own risk !
 - Secure boot can prevent access to the EC
-- isw is made/tested with MSI GS40 6QE under Arch/Manjaro, other laptops depend on user contribution and can't be tested by myself.
+- isw is made/tested with MSI GS40 6QE under Arch/Manjaro, other laptops depend on user contribution.
 - Check that your EC (Embedded Controler) work the same way, you can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/How-EC-work-(for-GS40-6QE-at-least)">wiki</a>.
 
 ## How to install
