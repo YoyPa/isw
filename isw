@@ -22,7 +22,7 @@ def ec_profile(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -96,7 +96,7 @@ def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
 		ap = cfgp.get(value, 'address_profile')
 		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
@@ -126,7 +126,7 @@ def ec_write(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp=configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
+		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -136,18 +136,19 @@ def ec_write(value):
 		list_gfsa = []
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
+		ev = cfgp.get(value, 'ec_version')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
-		fm = int(cfgp.get(value, 'fan_mode'))
+		fm = int(cfgp.get(ev, 'fan_mode'))
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
-				list_ct.append(int(cfgp.get(value, 'cpu_temp_'+str(i))))
+				list_ct.append(int(cfgp.get(ev, 'cpu_temp_'+str(i))))
 				list_gta.append(int(cfgp.get(ap, 'gpu_temp_address_'+str(i)),16))
-				list_gt.append(int(cfgp.get(value, 'gpu_temp_'+str(i))))
+				list_gt.append(int(cfgp.get(ev, 'gpu_temp_'+str(i))))
 			list_cfsa.append(int(cfgp.get(ap, 'cpu_fan_speed_address_'+str(i)),16))
-			list_cfs.append(int(cfgp.get(value, 'cpu_fan_speed_'+str(i))))
+			list_cfs.append(int(cfgp.get(ev, 'cpu_fan_speed_'+str(i))))
 			list_gfsa.append(int(cfgp.get(ap, 'gpu_fan_speed_address_'+str(i)),16))
-			list_gfs.append(int(cfgp.get(value, 'gpu_fan_speed_'+str(i))))
+			list_gfs.append(int(cfgp.get(ev, 'gpu_fan_speed_'+str(i))))
 	with open(EC_IO_FILE,"r+b") as file:
 		file.seek(fma)
 		file.write(bytes((fm,)))
@@ -228,10 +229,11 @@ def ec_boost(value):
 		with open(CFG_FILE) as cfgfile:
 			cfgp=configparser.ConfigParser()
 			cfgp.read_file(cfgfile)
-			# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost
+			# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
 			ap = cfgp.get(list_b[0], 'address_profile')
+			ev = cfgp.get(list_b[0], 'ec_version')
 			cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
-			cb = int(cfgp.get(list_b[0], 'cooler_boost'))
+			cb = int(cfgp.get(ev, 'cooler_boost'))
 		with open(EC_IO_FILE,"r+b") as file:
 			if list_b[1]=='on':
 				file.seek(cba)
