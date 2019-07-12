@@ -357,6 +357,8 @@ def main():
 	parser.add_argument("-w", type=ec_write,
 						help="┬ write into EC\n"
 						     "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m")
+	if len(sys.argv)==1:
+		parser.print_help(sys.stderr)
 	parser.parse_args()
 
 if __name__ == "__main__":
