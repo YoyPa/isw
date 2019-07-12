@@ -65,6 +65,52 @@ class ec_checkC(Action):
 		print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
 		os.system("od -A x -t x1z "+str(EC_IO_FILE))
 
+# option -f
+def file_profile(value):
+	print('\nProfile dump')
+	# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
+	list_cta = [0xf801,0xf802,0xf803,0xf804,0xf805,0xf806]
+	list_ct = []
+	list_cfsa = [0xf80b,0xf80c,0xf80d,0xf80e,0xf80f,0xf810,0xf811]
+	list_cfs = []
+	list_gta = [0xf821,0xf822,0xf823,0xf824,0xf825,0xf826]
+	list_gt = []
+	list_gfsa = [0xf82b,0xf82c,0xf82d,0xf82e,0xf82f,0xf830,0xf831]
+	list_gfs = []
+	with open(value,"r+b") as file:
+		for i in range(6):
+			file.seek(list_cta[i])
+			list_ct.append(int(file.read(1).hex(),16))
+			file.seek(list_gta[i])
+			list_gt.append(int(file.read(1).hex(),16))
+			if i==0:
+				print('-----------CPU---------------    -----------GPU---------------')
+				print('\x1b[0;32;1m'+"%-11s %-20s %-11s %s" %(
+					'Value',
+					'set @ address',
+					'Value',
+					'set @ address'
+				)+'\x1b[0m')
+			print("%-11s %-20s %-11s %s" %(
+				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
+				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
+				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
+				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
+			))
+		for i in range(7):
+			file.seek(list_cfsa[i])
+			list_cfs.append(int(file.read(1).hex(),16))
+			file.seek(list_gfsa[i])
+			list_gfs.append(int(file.read(1).hex(),16))
+			if i==0:
+				print('\r')
+			print("%-11s %-20s %-11s %s" %(
+				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
+				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
+				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
+				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
+			))
+
 # option -p
 def ec_profile(value):
 	print('\nProfile dump '+str(DUMP_POS))
@@ -294,7 +340,10 @@ def main():
 						     "├ replace 1st \033[4mB\033[0m with \033[4mPROFILE_NAME\033[0m\n"
 						     "└ replace 2nd \033[4mB\033[0m with \033[4mon\033[0m OR \033[4moff\033[0m\n ")
 	parser.add_argument("-c", action=ec_checkC, nargs=0,
-						help="─ show an EC dump")
+						help="─ show an EC dump\n ")
+	parser.add_argument("-f", type=file_profile,
+						help="┬ show profile in EC update file\n"
+						     "└ replace \033[4mF\033[0m with \033[4mFILE_NAME\033[0m\n ")
 	parser.add_argument("-p", type=ec_profile,
 						help="┬ show current profile in EC\n"
 						     "└ replace \033[4mP\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
@@ -307,7 +356,7 @@ def main():
 						     "└ replace 2nd \033[4mS\033[0m with \033[4mVALUE\033[0m   in decimal     (00)\n ")
 	parser.add_argument("-w", type=ec_write,
 						help="┬ write into EC\n"
-						     "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
+						     "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m")
 	parser.parse_args()
 
 if __name__ == "__main__":
