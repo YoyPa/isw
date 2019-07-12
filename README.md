@@ -34,28 +34,31 @@ yay -S isw
 
 ## How to use it ?
 ```
-usage: isw [-h] [-p P] [-r R] [-w W] [-s S S] [-b B B] [-c]
+usage: isw [-h] [-b B B] [-c] [-f F] [-p P] [-r R] [-s S S] [-w W]
 
 optional arguments:
   -h, --help  show this help message and exit
+  -b B B      ┬ activate or disable CoolerBoost
+              ├ replace 1st B with PROFILE_NAME
+              └ replace 2nd B with on OR off
+
+  -c          ─ show an EC dump
+
+  -f F        ┬ show profile in EC update file
+              └ replace F with FILE_NAME
+
   -p P        ┬ show current profile in EC
               └ replace P with PROFILE_NAME
 
   -r R        ┬ show realtime CPU+GPU temp and fan speed from EC
               └ replace R with PROFILE_NAME
 
-  -w W        ┬ write into EC
-              └ replace W with PROFILE_NAME
-
   -s S S      ┬ set a single value into EC
               ├ replace 1st S with ADDRESS in hexadecimal (0x00)
               └ replace 2nd S with VALUE   in decimal     (00)
 
-  -b B B      ┬ activate or disable CoolerBoost
-              ├ replace 1st B with PROFILE_NAME
-              └ replace 2nd B with on OR off
-
-  -c          ─ show an EC dump
+  -w W        ┬ write into EC
+              └ replace W with PROFILE_NAME
 
 ┌─ TIPS ──────────────────────────────────────────────────────────────────┐
 │ Set your config in '/etc/isw.conf'.                                     │
