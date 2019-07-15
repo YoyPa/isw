@@ -36,25 +36,21 @@ def ec_boost(value):
 				file.write(bytes((cb,)))
 				print('\r')
 				print('\x1b[0;32;1m'+"%-11s %s" %(
-					'Value',
-					'set @ address'
-				)+'\x1b[0m')
+				      'Value',
+				      'set @ address')+'\x1b[0m')
 				print("%-11s %s" %(
-					hex(cb)+'('+str(cb)+')',
-					hex(cba)+'(byte'+str(cba)+')'
-				))
+				      hex(cb)+'('+str(cb)+')',
+				      hex(cba)+'(byte'+str(cba)+')'))
 			elif list_b[1]=='off':
 				file.seek(cba)
 				file.write(bytes((int(0),)))
 				print('\r')
 				print('\x1b[0;32;1m'+"%-11s %s" %(
-					'Value',
-					'set @ address'
-				)+'\x1b[0m')
+				      'Value',
+				      'set @ address')+'\x1b[0m')
 				print("%-11s %s" %(
-					hex(0)+'('+str(0)+')',
-					hex(cba)+'(byte'+str(cba)+')'
-				))
+				      hex(0)+'('+str(0)+')',
+				      hex(cba)+'(byte'+str(cba)+')'))
 			else:
 				print('Error: Only \033[4mon\033[0m and \033[4moff\033[0m are valid.')
 
@@ -101,17 +97,15 @@ def file_profile(value):
 					j+=1
 					print('-----------CPU---------------    -----------GPU---------------')
 					print('\x1b[0;32;1m'+"%-11s %-20s %-11s %s" %(
-						'Value',
-						'set @ address',
-						'Value',
-						'set @ address'
-					)+'\x1b[0m')
+					      'Value',
+					      'set @ address',
+					      'Value',
+					      'set @ address')+'\x1b[0m')
 				print("%-11s %-20s %-11s %s" %(
-					hex(list_ct[i+h])+'('+str(list_ct[i+h])+'°C)',
-					hex(list_cta[i+h])+'(byte'+str(list_cta[i+h])+')',
-					hex(list_gt[i+h])+'('+str(list_gt[i+h])+'°C)',
-					hex(list_gta[i+h])+'(byte'+str(list_gta[i+h])+')'
-				))
+				      hex(list_ct[i+h])+'('+str(list_ct[i+h])+'°C)',
+				      hex(list_cta[i+h])+'(byte'+str(list_cta[i+h])+')',
+				      hex(list_gt[i+h])+'('+str(list_gt[i+h])+'°C)',
+				      hex(list_gta[i+h])+'(byte'+str(list_gta[i+h])+')'))
 			for i in range(7):
 				if h==6:
 					h+=1
@@ -126,11 +120,10 @@ def file_profile(value):
 				if i==0:
 					print('\r')
 				print("%-11s %-20s %-11s %s" %(
-					hex(list_cfs[i+h])+'('+str(list_cfs[i+h])+'%)',
-					hex(list_cfsa[i+h])+'(byte'+str(list_cfsa[i+h])+')',
-					hex(list_gfs[i+h])+'('+str(list_gfs[i+h])+'%)',
-					hex(list_gfsa[i+h])+'(byte'+str(list_gfsa[i+h])+')'
-				))
+				      hex(list_cfs[i+h])+'('+str(list_cfs[i+h])+'%)',
+				      hex(list_cfsa[i+h])+'(byte'+str(list_cfsa[i+h])+')',
+				      hex(list_gfs[i+h])+'('+str(list_gfs[i+h])+'%)',
+				      hex(list_gfsa[i+h])+'(byte'+str(list_gfsa[i+h])+')'))
 
 # option -p
 def ec_profile(value):
@@ -165,15 +158,13 @@ def ec_profile(value):
 		elif fm==int(12):
 			sfm='Auto'
 		print('\x1b[0;32;1m'+"%-11s %-16s %s" %(
-				'Value',
-				'set @ address',
-				'Fan mode'
-		)+'\x1b[0m')
+		      'Value',
+		      'set @ address',
+		      'Fan mode')+'\x1b[0m')
 		print("%-11s %-16s %s" %(
-			hex(fm)+'('+str(fm)+')',
-			hex(fma)+'(byte'+str(fma)+')',
-			sfm+'\n'
-		))
+		      hex(fm)+'('+str(fm)+')',
+		      hex(fma)+'(byte'+str(fma)+')',
+		      sfm+'\n'))
 		for i in range(6):
 			file.seek(list_cta[i])
 			list_ct.append(int(file.read(1).hex(),16))
@@ -182,17 +173,15 @@ def ec_profile(value):
 			if i==0:
 				print('-----------CPU-----------    -----------GPU-----------')
 				print('\x1b[0;32;1m'+"%-11s %-16s %-11s %s" %(
-					'Value',
-					'set @ address',
-					'Value',
-					'set @ address'
-				)+'\x1b[0m')
+				      'Value',
+				      'set @ address',
+				      'Value',
+				      'set @ address')+'\x1b[0m')
 			print("%-11s %-16s %-11s %s" %(
-				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
-				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
-				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
-				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
-			))
+			      hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
+			      hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
+			      hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
+			      hex(list_gta[i])+'(byte'+str(list_gta[i])+')'))
 		for i in range(7):
 			file.seek(list_cfsa[i])
 			list_cfs.append(int(file.read(1).hex(),16))
@@ -201,11 +190,10 @@ def ec_profile(value):
 			if i==0:
 				print('\r')
 			print("%-11s %-16s %-11s %s" %(
-				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
-				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
-				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
-				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
-			))
+			      hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
+			      hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
+			      hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
+			      hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'))
 
 # option -r
 def ec_read(value):
@@ -245,13 +233,11 @@ def ec_set(value):
 			file.write(bytes((int(list_s[1]),)))
 			print('\r')
 			print('\x1b[0;32;1m'+"%-11s %s" %(
-				'Value',
-				'set @ address'
-			)+'\x1b[0m')
+			      'Value',
+			      'set @ address')+'\x1b[0m')
 			print("%-11s %s" %(
-				hex(int(list_s[1]))+'('+str(list_s[1])+')',
-				list_s[0]+'(byte'+str(int(list_s[0],16))+')'
-			))
+			      hex(int(list_s[1]))+'('+str(list_s[1])+')',
+			      list_s[0]+'(byte'+str(int(list_s[0],16))+')'))
 
 # option -w
 def ec_write(value):
@@ -294,15 +280,13 @@ def ec_write(value):
 		elif fm==int(12):
 			sfm='Auto'
 		print('\x1b[0;32;1m'+"%-11s %-16s %s" %(
-				'Value',
-				'set @ address',
-				'Fan mode'
-		)+'\x1b[0m')
+		      'Value',
+		      'set @ address',
+		      'Fan mode')+'\x1b[0m')
 		print("%-11s %-16s %s" %(
-			hex(fm)+'('+str(fm)+')',
-			hex(fma)+'(byte'+str(fma)+')',
-			sfm+'\n'
-		))
+		      hex(fm)+'('+str(fm)+')',
+		      hex(fma)+'(byte'+str(fma)+')',
+		      sfm+'\n'))
 		for i in range(6):
 			file.seek(list_cta[i])
 			file.write(bytes((list_ct[i],)))
@@ -311,17 +295,15 @@ def ec_write(value):
 			if i==0:
 				print('-----------CPU-----------    -----------GPU-----------')
 				print('\x1b[0;32;1m'+"%-11s %-16s %-11s %s" %(
-					'Value',
-					'set @ address',
-					'Value',
-					'set @ address'
-				)+'\x1b[0m')
+				      'Value',
+				      'set @ address',
+				      'Value',
+				      'set @ address')+'\x1b[0m')
 			print("%-11s %-16s %-11s %s" %(
-				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
-				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
-				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
-				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
-			))
+			      hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
+			      hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
+			      hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
+			      hex(list_gta[i])+'(byte'+str(list_gta[i])+')'))
 		for i in range(7):
 			file.seek(list_cfsa[i])
 			file.write(bytes((list_cfs[i],)))
@@ -330,11 +312,10 @@ def ec_write(value):
 			if i==0:
 				print('\r')
 			print("%-11s %-16s %-11s %s" %(
-				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
-				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
-				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
-				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
-			))
+			      hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
+			      hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
+			      hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
+			      hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'))
 
 def main():
 	# permet l'utilisation d'arguments
@@ -354,30 +335,29 @@ def main():
 │ ISW is MSI at 180°                                                      │
 │ It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   │
 └─────────────────────────────────────────────────────────────────────────┘
-"""
-	)
+""")
 	parser.add_argument("-b", type=ec_boost, nargs=2,
-						help="┬ activate or disable CoolerBoost\n"
-						     "├ replace 1st \033[4mB\033[0m with \033[4mPROFILE_NAME\033[0m\n"
-						     "└ replace 2nd \033[4mB\033[0m with \033[4mon\033[0m OR \033[4moff\033[0m\n ")
+	                    help="┬ activate or disable CoolerBoost\n"
+	                         "├ replace 1st \033[4mB\033[0m with \033[4mPROFILE_NAME\033[0m\n"
+	                         "└ replace 2nd \033[4mB\033[0m with \033[4mon\033[0m OR \033[4moff\033[0m\n ")
 	parser.add_argument("-c", action=ec_checkC, nargs=0,
-						help="─ show an EC dump\n ")
+	                    help="─ show an EC dump\n ")
 	parser.add_argument("-f", type=file_profile,
-						help="┬ show profile in EC update file\n"
-						     "└ replace \033[4mF\033[0m with \033[4mFILE_NAME\033[0m\n ")
+	                    help="┬ show profile in EC update file\n"
+	                         "└ replace \033[4mF\033[0m with \033[4mFILE_NAME\033[0m\n ")
 	parser.add_argument("-p", type=ec_profile,
-						help="┬ show current profile in EC\n"
-						     "└ replace \033[4mP\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
+	                    help="┬ show current profile in EC\n"
+	                         "└ replace \033[4mP\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
 	parser.add_argument("-r", type=ec_read,
-						help="┬ show realtime CPU+GPU temp and fan speed from EC\n"
-							 "└ replace \033[4mR\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
+	                    help="┬ show realtime CPU+GPU temp and fan speed from EC\n"
+	                         "└ replace \033[4mR\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
 	parser.add_argument("-s", type=ec_set, nargs=2,
-						help="┬ set a single value into EC\n"
-						     "├ replace 1st \033[4mS\033[0m with \033[4mADDRESS\033[0m in hexadecimal (0x00)\n"
-						     "└ replace 2nd \033[4mS\033[0m with \033[4mVALUE\033[0m   in decimal     (00)\n ")
+	                    help="┬ set a single value into EC\n"
+	                         "├ replace 1st \033[4mS\033[0m with \033[4mADDRESS\033[0m in hexadecimal (0x00)\n"
+	                         "└ replace 2nd \033[4mS\033[0m with \033[4mVALUE\033[0m   in decimal     (00)\n ")
 	parser.add_argument("-w", type=ec_write,
-						help="┬ write into EC\n"
-						     "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m")
+	                    help="┬ write into EC\n"
+	                         "└ replace \033[4mW\033[0m with \033[4mPROFILE_NAME\033[0m")
 	if len(sys.argv)==1:
 		parser.print_help(sys.stderr)
 	parser.parse_args()
