@@ -67,49 +67,56 @@ class ec_checkC(Action):
 
 # option -f
 def file_profile(value):
-	print('\nProfile dump')
 	# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode cb=coolerboost e=ec v=version
-	list_cta = [0xf801,0xf802,0xf803,0xf804,0xf805,0xf806]
+	list_cta = [0xf801,0xf802,0xf803,0xf804,0xf805,0xf806,0xf841,0xf842,0xf843,0xf844,0xf845,0xf846,0xf881,0xf882,0xf883,0xf884,0xf885,0xf886]
 	list_ct = []
-	list_cfsa = [0xf80b,0xf80c,0xf80d,0xf80e,0xf80f,0xf810,0xf811]
+	list_cfsa = [0xf80b,0xf80c,0xf80d,0xf80e,0xf80f,0xf810,0xf811,0xf84b,0xf84c,0xf84d,0xf84e,0xf84f,0xf850,0xf851,0xf88b,0xf88c,0xf88d,0xf88e,0xf88f,0xf890,0xf891]
 	list_cfs = []
-	list_gta = [0xf821,0xf822,0xf823,0xf824,0xf825,0xf826]
+	list_gta = [0xf821,0xf822,0xf823,0xf824,0xf825,0xf826,0xf861,0xf862,0xf863,0xf864,0xf865,0xf866,0xf8a1,0xf8a2,0xf8a3,0xf8a4,0xf8a5,0xf8a6]
 	list_gt = []
-	list_gfsa = [0xf82b,0xf82c,0xf82d,0xf82e,0xf82f,0xf830,0xf831]
+	list_gfsa = [0xf82b,0xf82c,0xf82d,0xf82e,0xf82f,0xf830,0xf831, 0xf86b,0xf86c,0xf86d,0xf86e,0xf86f,0xf870,0xf871, 0xf8ab,0xf8ac,0xf8ad,0xf8ae,0xf8af,0xf8b0,0xf8b1]
 	list_gfs = []
 	with open(value,"r+b") as file:
-		for i in range(6):
-			file.seek(list_cta[i])
-			list_ct.append(int(file.read(1).hex(),16))
-			file.seek(list_gta[i])
-			list_gt.append(int(file.read(1).hex(),16))
-			if i==0:
-				print('-----------CPU---------------    -----------GPU---------------')
-				print('\x1b[0;32;1m'+"%-11s %-20s %-11s %s" %(
-					'Value',
-					'set @ address',
-					'Value',
-					'set @ address'
-				)+'\x1b[0m')
-			print("%-11s %-20s %-11s %s" %(
-				hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
-				hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
-				hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
-				hex(list_gta[i])+'(byte'+str(list_gta[i])+')'
-			))
-		for i in range(7):
-			file.seek(list_cfsa[i])
-			list_cfs.append(int(file.read(1).hex(),16))
-			file.seek(list_gfsa[i])
-			list_gfs.append(int(file.read(1).hex(),16))
-			if i==0:
-				print('\r')
-			print("%-11s %-20s %-11s %s" %(
-				hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
-				hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
-				hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
-				hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'
-			))
+		j=1
+		for h in range(0,13,6):
+			for i in range(6):
+				file.seek(list_cta[i+h])
+				list_ct.append(int(file.read(1).hex(),16))
+				file.seek(list_gta[i+h])
+				list_gt.append(int(file.read(1).hex(),16))
+				if i==0:
+					print('\nProfile '+str(j)+' dump')
+					j+=1
+					print('-----------CPU---------------    -----------GPU---------------')
+					print('\x1b[0;32;1m'+"%-11s %-20s %-11s %s" %(
+						'Value',
+						'set @ address',
+						'Value',
+						'set @ address'
+					)+'\x1b[0m')
+				print("%-11s %-20s %-11s %s" %(
+					hex(list_ct[i+h])+'('+str(list_ct[i+h])+'°C)',
+					hex(list_cta[i+h])+'(byte'+str(list_cta[i+h])+')',
+					hex(list_gt[i+h])+'('+str(list_gt[i+h])+'°C)',
+					hex(list_gta[i+h])+'(byte'+str(list_gta[i+h])+')'
+				))
+			for i in range(7):
+				if h==6:
+					h+=1
+				if h==12:
+					h+=2
+				file.seek(list_cfsa[i+h])
+				list_cfs.append(int(file.read(1).hex(),16))
+				file.seek(list_gfsa[i+h])
+				list_gfs.append(int(file.read(1).hex(),16))
+				if i==0:
+					print('\r')
+				print("%-11s %-20s %-11s %s" %(
+					hex(list_cfs[i+h])+'('+str(list_cfs[i+h])+'%)',
+					hex(list_cfsa[i+h])+'(byte'+str(list_cfsa[i+h])+')',
+					hex(list_gfs[i+h])+'('+str(list_gfs[i+h])+'%)',
+					hex(list_gfsa[i+h])+'(byte'+str(list_gfsa[i+h])+')'
+				))
 
 # option -p
 def ec_profile(value):
