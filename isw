@@ -7,8 +7,9 @@ import configparser
 from argparse import ArgumentParser
 from argparse import Action
 from argparse import RawTextHelpFormatter
+from typing import Union
 
-# VARIABLES GLOBALES
+# GLOBAL VARIABLES
 EC_IO_FILE = "/sys/kernel/debug/ec/ec0/io"
 CFG_FILE = "/etc/isw.conf"
 DUMP_POS = ""
@@ -16,9 +17,22 @@ list_s = []
 list_b = []
 
 
-# FONCTIONS
+def print_exc(f):
+    def applicator(*args, **kwargs):
+        try:
+            f(*args, **kwargs)
+        except:
+            import traceback
+            traceback.print_exc()
+            raise
+
+    return applicator
+
+
+# FUNCTIONS
 # option -b
 # argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
+@print_exc
 def ec_boost(value):
     global list_b
     list_b.append(value)
@@ -37,9 +51,9 @@ def ec_boost(value):
                 file.seek(ba)
                 file.write(bytes((b_on,)))
                 print('\r')
-                print('\x1b[0;32;1m' + "%-11s %s" % (
+                print(ColoredString.green("%-11s %s" % (
                     'Value',
-                    'set @ address') + '\x1b[0m')
+                    'set @ address')))
                 print("%-11s %s" % (
                     hex(b_on) + '(' + str(b_on) + ')',
                     hex(ba) + '(byte' + str(ba) + ')'))
@@ -47,9 +61,9 @@ def ec_boost(value):
                 file.seek(ba)
                 file.write(bytes((b_off,)))
                 print('\r')
-                print('\x1b[0;32;1m' + "%-11s %s" % (
+                print(ColoredString.green("%-11s %s" % (
                     'Value',
-                    'set @ address') + '\x1b[0m')
+                    'set @ address')))
                 print("%-11s %s" % (
                     hex(b_off) + '(' + str(b_off) + ')',
                     hex(ba) + '(byte' + str(ba) + ')'))
@@ -59,13 +73,16 @@ def ec_boost(value):
 
 # option -c
 class ec_checkC(Action):
+
+    @print_exc
     def __call__(self, parser, namespace, values, option_string=None):
         print('\nEC dump ' + str(DUMP_POS))
-        print('\x1b[0;32;1m' + '       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F' + '\x1b[0m')
+        print(ColoredString.green('       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F'))
         os.system("od -A x -t x1z " + str(EC_IO_FILE))
 
 
 # option -f
+@print_exc
 def file_profile(value):
     # c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost e=ec v=version
     list_cta = [0xf801, 0xf802, 0xf803, 0xf804, 0xf805, 0xf806,
@@ -96,20 +113,13 @@ def file_profile(value):
                 list_ct.append(int(file.read(1).hex(), 16))
                 file.seek(list_gta[i + h])
                 list_gt.append(int(file.read(1).hex(), 16))
-                if i == 0:
-                    print('\nProfile ' + str(j) + ' dump')
-                    j += 1
-                    print('-----------CPU---------------    -----------GPU---------------')
-                    print('\x1b[0;32;1m' + "%-11s %-20s %-11s %s" % (
-                        'Value',
-                        'set @ address',
-                        'Value',
-                        'set @ address') + '\x1b[0m')
-                print("%-11s %-20s %-11s %s" % (
-                    hex(list_ct[i + h]) + '(' + str(list_ct[i + h]) + '°C)',
-                    hex(list_cta[i + h]) + '(byte' + str(list_cta[i + h]) + ')',
-                    hex(list_gt[i + h]) + '(' + str(list_gt[i + h]) + '°C)',
-                    hex(list_gta[i + h]) + '(byte' + str(list_gta[i + h]) + ')'))
+
+                Reporter.dense_report(
+                    list_ct[i], list_cta[i],
+                    list_gt[i], list_gta[i],
+                    "CPU", "GPU",
+                    first_row=(i == 0)
+                )
             for i in range(7):
                 if h == 6:
                     h += 1
@@ -123,14 +133,15 @@ def file_profile(value):
                 list_gfs.append(int(file.read(1).hex(), 16))
                 if i == 0:
                     print('\r')
-                print("%-11s %-20s %-11s %s" % (
-                    hex(list_cfs[i + h]) + '(' + str(list_cfs[i + h]) + '%)',
-                    hex(list_cfsa[i + h]) + '(byte' + str(list_cfsa[i + h]) + ')',
-                    hex(list_gfs[i + h]) + '(' + str(list_gfs[i + h]) + '%)',
-                    hex(list_gfsa[i + h]) + '(byte' + str(list_gfsa[i + h]) + ')'))
+
+                Reporter.dense_report(
+                    list_cfs[i], list_cfsa[i],
+                    list_gfs[i], list_gfsa[i]
+                )
 
 
 # option -p
+@print_exc
 def ec_profile(value):
     print('\nProfile dump ' + str(DUMP_POS))
     with open(CFG_FILE) as cfgfile:
@@ -162,31 +173,19 @@ def ec_profile(value):
             sfm = 'Basic'
         elif fm == int(12):
             sfm = 'Auto'
-        print('\x1b[0;32;1m' + "%-11s %-16s %s" % (
-            'Value',
-            'set @ address',
-            'Fan mode') + '\x1b[0m')
-        print("%-11s %-16s %s" % (
-            hex(fm) + '(' + str(fm) + ')',
-            hex(fma) + '(byte' + str(fma) + ')',
-            sfm + '\n'))
+        Reporter.report(fm, fma, "Fan mode", sfm)
         for i in range(6):
             file.seek(list_cta[i])
             list_ct.append(int(file.read(1).hex(), 16))
             file.seek(list_gta[i])
             list_gt.append(int(file.read(1).hex(), 16))
-            if i == 0:
-                print('-----------CPU-----------    -----------GPU-----------')
-                print('\x1b[0;32;1m' + "%-11s %-16s %-11s %s" % (
-                    'Value',
-                    'set @ address',
-                    'Value',
-                    'set @ address') + '\x1b[0m')
-            print("%-11s %-16s %-11s %s" % (
-                hex(list_ct[i]) + '(' + str(list_ct[i]) + '°C)',
-                hex(list_cta[i]) + '(byte' + str(list_cta[i]) + ')',
-                hex(list_gt[i]) + '(' + str(list_gt[i]) + '°C)',
-                hex(list_gta[i]) + '(byte' + str(list_gta[i]) + ')'))
+
+            Reporter.dense_report(
+                list_ct[i], list_cta[i],
+                list_gt[i], list_gta[i],
+                "CPU", "GPU",
+                first_row=(i == 0)
+            )
         for i in range(7):
             file.seek(list_cfsa[i])
             list_cfs.append(int(file.read(1).hex(), 16))
@@ -194,43 +193,59 @@ def ec_profile(value):
             list_gfs.append(int(file.read(1).hex(), 16))
             if i == 0:
                 print('\r')
-            print("%-11s %-16s %-11s %s" % (
-                hex(list_cfs[i]) + '(' + str(list_cfs[i]) + '%)',
-                hex(list_cfsa[i]) + '(byte' + str(list_cfsa[i]) + ')',
-                hex(list_gfs[i]) + '(' + str(list_gfs[i]) + '%)',
-                hex(list_gfsa[i]) + '(byte' + str(list_gfsa[i]) + ')'))
+
+            Reporter.dense_report(
+                list_cfs[i], list_cfsa[i],
+                list_gfs[i], list_gfsa[i]
+            )
 
 
 # option -r
+@print_exc
 def ec_read(value):
     with open(CFG_FILE) as cfgfile:
         cfgp = configparser.ConfigParser()
         cfgp.read_file(cfgfile)
+
+        battery_modes = BatteryModes(cfgp, value)
+        shift_modes = ShiftModes(cfgp, value)
+
         # c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost e=ec v=version
         ap = cfgp.get(value, 'address_profile')
         rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'), 16)
         rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'), 16)
         rgta = int(cfgp.get(ap, 'realtime_gpu_temp_address'), 16)
         rgfsa = int(cfgp.get(ap, 'realtime_gpu_fan_speed_address'), 16)
+        battery_addr = int(cfgp.get(ap, 'battery_address'), 16)
+        shift_addr = int(cfgp.get(ap, 'shift_address'), 16)
+
     with open(EC_IO_FILE, "rb") as file:
-        file.seek(rcta)
-        temp_cpu = int(file.read(1).hex(), 16)
-        file.seek(rcfsa)
-        fans_cpu = int(file.read(1).hex(), 16)
-        file.seek(rgta)
-        temp_gpu = int(file.read(1).hex(), 16)
-        file.seek(rgfsa)
-        fans_gpu = int(file.read(1).hex(), 16)
+        values = {}
+        for addr, name in (
+                (rcta, "temp_cpu"),
+                (rcfsa, "fans_cpu"),
+                (rgta, "temp_gpu"),
+                (rgfsa, "fans_gpu"),
+                (battery_addr, "battery_mode"),
+                (shift_addr, "shift")
+        ):
+            file.seek(addr)
+            values[name] = int(file.read(1).hex(), 16)
+
         print("CPU")
-        print("└─temp     (°C): " + str(temp_cpu))
-        print("└─fan speed (%): " + str(fans_cpu))
+        print("└─temp     (°C): " + str(values["temp_cpu"]))
+        print("└─fan speed (%): " + str(values["fans_cpu"]))
         print("GPU")
-        print("└─temp     (°C): " + str(temp_gpu))
-        print("└─fan speed (%): " + str(fans_gpu))
+        print("└─temp     (°C): " + str(values["temp_gpu"]))
+        print("└─fan speed (%): " + str(values["fans_gpu"]))
+        print("Modes")
+        print("└─Battery: " + battery_modes.parse_mode(values["battery_mode"]))
+        print("└─Shift: " + shift_modes.parse_mode(values["shift"]))
 
 
 # option -s
 # argumentparser va lancer deux fois la fonction avec un value different au lieu de créer une liste...
+@print_exc
 def ec_set(value):
     global list_s
     list_s.append(value)
@@ -239,15 +254,16 @@ def ec_set(value):
             file.seek(int(list_s[0], 16))
             file.write(bytes((int(list_s[1]),)))
             print('\r')
-            print('\x1b[0;32;1m' + "%-11s %s" % (
+            print(ColoredString.green("%-11s %s" % (
                 'Value',
-                'set @ address') + '\x1b[0m')
+                'set @ address')))
             print("%-11s %s" % (
                 hex(int(list_s[1])) + '(' + str(list_s[1]) + ')',
                 list_s[0] + '(byte' + str(int(list_s[0], 16)) + ')'))
 
 
 # option -w
+@print_exc
 def ec_write(value):
     global DUMP_POS
     DUMP_POS = "after modification"
@@ -255,6 +271,10 @@ def ec_write(value):
     with open(CFG_FILE) as cfgfile:
         cfgp = configparser.ConfigParser()
         cfgp.read_file(cfgfile)
+
+        battery_modes = BatteryModes(cfgp, value)
+        shift_modes = ShiftModes(cfgp, value)
+
         # c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost e=ec v=version
         list_cta = []
         list_ct = []
@@ -268,6 +288,16 @@ def ec_write(value):
         ev = cfgp.get(value, 'ec_version')
         fma = int(cfgp.get(ap, 'fan_mode_address'), 16)
         fm = int(cfgp.get(ev, 'fan_mode'))
+
+        battery_addr = int(cfgp.get(ap, 'battery_address'), 16)
+        shift_addr = int(cfgp.get(ap, 'shift_address'), 16)
+
+        battery_mode = cfgp.get(ev, 'battery_value', fallback='balanced')
+        shift_mode = cfgp.get(ev, 'shift_value', fallback='comfort')
+
+        battery_value: int = battery_modes.parse_mode(battery_mode)
+        shift_value: int = shift_modes.parse_mode(shift_mode)
+
         for i in range(7):
             if i < 6:
                 list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_' + str(i)), 16))
@@ -279,6 +309,17 @@ def ec_write(value):
             list_gfsa.append(int(cfgp.get(ap, 'gpu_fan_speed_address_' + str(i)), 16))
             list_gfs.append(int(cfgp.get(ev, 'gpu_fan_speed_' + str(i))))
     with open(EC_IO_FILE, "r+b") as file:
+
+        if battery_value is not -1:
+            file.seek(battery_addr)
+            file.write(bytes((battery_value,)))
+            Reporter.report(battery_value, battery_addr, "Battery mode", battery_mode)
+
+        if shift_value is not -1:
+            file.seek(shift_addr)
+            file.write(bytes((shift_value,)))
+            Reporter.report(shift_value, shift_addr, "Shift mode", shift_mode)
+
         file.seek(fma)
         file.write(bytes((fm,)))
         if fm == int(140):
@@ -287,31 +328,20 @@ def ec_write(value):
             sfm = 'Basic'
         elif fm == int(12):
             sfm = 'Auto'
-        print('\x1b[0;32;1m' + "%-11s %-16s %s" % (
-            'Value',
-            'set @ address',
-            'Fan mode') + '\x1b[0m')
-        print("%-11s %-16s %s" % (
-            hex(fm) + '(' + str(fm) + ')',
-            hex(fma) + '(byte' + str(fma) + ')',
-            sfm + '\n'))
+        Reporter.report(fm, fma, "Fan mode", sfm)
+
         for i in range(6):
             file.seek(list_cta[i])
             file.write(bytes((list_ct[i],)))
             file.seek(list_gta[i])
             file.write(bytes((list_gt[i],)))
-            if i == 0:
-                print('-----------CPU-----------    -----------GPU-----------')
-                print('\x1b[0;32;1m' + "%-11s %-16s %-11s %s" % (
-                    'Value',
-                    'set @ address',
-                    'Value',
-                    'set @ address') + '\x1b[0m')
-            print("%-11s %-16s %-11s %s" % (
-                hex(list_ct[i]) + '(' + str(list_ct[i]) + '°C)',
-                hex(list_cta[i]) + '(byte' + str(list_cta[i]) + ')',
-                hex(list_gt[i]) + '(' + str(list_gt[i]) + '°C)',
-                hex(list_gta[i]) + '(byte' + str(list_gta[i]) + ')'))
+
+            Reporter.dense_report(
+                list_ct[i], list_cta[i],
+                list_gt[i], list_gta[i],
+                "CPU", "GPU",
+                first_row=(i == 0)
+            )
         for i in range(7):
             file.seek(list_cfsa[i])
             file.write(bytes((list_cfs[i],)))
@@ -319,11 +349,133 @@ def ec_write(value):
             file.write(bytes((list_gfs[i],)))
             if i == 0:
                 print('\r')
-            print("%-11s %-16s %-11s %s" % (
-                hex(list_cfs[i]) + '(' + str(list_cfs[i]) + '%)',
-                hex(list_cfsa[i]) + '(byte' + str(list_cfsa[i]) + ')',
-                hex(list_gfs[i]) + '(' + str(list_gfs[i]) + '%)',
-                hex(list_gfsa[i]) + '(byte' + str(list_gfsa[i]) + ')'))
+
+            Reporter.dense_report(
+                list_cfs[i], list_cfsa[i],
+                list_gfs[i], list_gfsa[i]
+            )
+
+
+class Reporter:
+
+    @staticmethod
+    def dense_report(value1: int, address1: int,
+                     value2: int, address2: int,
+                     column1: str = None, column2: str = None,
+                     first_row: bool = False):
+        if first_row:
+            print('-----------{}-----------    -----------{}-----------'.format(column1, column2))
+            print(ColoredString.green("%-11s %-16s %-11s %s" % (
+                'Value',
+                'set @ address',
+                'Value',
+                'set @ address')))
+
+        print("%-11s %-16s %-11s %s" % (
+            hex(value1) + '(' + str(value1) + '°C)',
+            hex(address1) + '(byte' + str(address1) + ')',
+            hex(value2) + '(' + str(value2) + '°C)',
+            hex(address2) + '(byte' + str(address2) + ')'))
+
+    @staticmethod
+    def report(value: int, address: int, what: str, state: str):
+        print(ColoredString.green("%-11s %-16s %s" % (
+            'Value',
+            'set @ address',
+            what)))
+        print("%-11s %-16s %s" % (
+            hex(value) + '(' + str(value) + ')',
+            hex(address) + '(byte' + str(address) + ')',
+            state + '\n'))
+
+
+class ColoredString:
+    @staticmethod
+    def orange(string: str) -> str:
+        return "\x1b[38;5;214m{}\x1b[0m".format(string)
+
+    @staticmethod
+    def green(string: str) -> str:
+        return "\x1b[0;32;1m{}\x1b[0m".format(string)
+
+
+class Modes:
+    def parse_mode(self, mode: Union[int, str]) -> Union[str, int]:
+        """
+        Based on the input mode (as parsed from the EC register), attempt to find corresponding mode name.
+        Also works in reverse (you provide name of the mode and the value is returned).
+        """
+        if type(mode) is int:
+            for name, value in self.__dict__.items():
+                if value is mode:
+                    return name
+            return "unknown ({})".format(hex(mode))
+        else:
+            for name, value in self.__dict__.items():
+                if name == mode:
+                    return value
+
+            print("{}: Mode '{}' not found in {}!".format(
+                ColoredString.orange("WARNING"),
+                mode,
+                self.__class__.__name__
+            ))
+            return -1
+
+    def validate(self) -> None:
+        """
+        Prints warning if a configuration was not found for mode.
+        """
+        missing = []
+        for name, value in self.__dict__.items():
+            if value is -1:
+                missing.append(name)
+        if missing:
+            print("{}: Missing configuration value in {} for: [{}]".format(
+                ColoredString.orange("WARNING"),
+                self.__class__.__name__,
+                ', '.join(missing)
+            ))
+
+    def __str__(self) -> str:
+        """
+        This makes the instance printable as if it was a dict.
+        """
+        return str(self.__dict__)
+
+
+class BatteryModes(Modes):
+    def __init__(self, conf: configparser.ConfigParser, section: str):
+        """
+        Creates three battery modes from configuration. The values should represent the Shift state in EC.
+            - mobility
+            - balanced
+            - eco
+        """
+        battery_profile_name = conf.get(section, 'battery_profile')
+
+        self.mobility = int(conf.get(battery_profile_name, 'mobility_value', fallback="-1"), 16)
+        self.balanced = int(conf.get(battery_profile_name, 'balanced_value', fallback="-1"), 16)
+        self.eco = int(conf.get(battery_profile_name, 'eco_value', fallback="-1"), 16)
+        self.validate()
+
+
+class ShiftModes(Modes):
+    def __init__(self, conf: configparser.ConfigParser, section: str):
+        """
+        Creates four shift modes from configuration. The values should represent the Shift state in EC.
+            - sport
+            - comfort
+            - eco
+            - turbo
+        """
+        shift_profile_name = conf.get(section, 'shift_profile')
+
+        self.sport = int(conf.get(shift_profile_name, 'sport_value', fallback="-1"), 16)
+        self.comfort = int(conf.get(shift_profile_name, 'comfort_value', fallback="-1"), 16)
+        self.eco = int(conf.get(shift_profile_name, 'eco_value', fallback="-1"), 16)
+        self.turbo = int(conf.get(shift_profile_name, 'turbo_value', fallback="-1"), 16)
+        self.validate()
 
 
 def main():
@@ -360,7 +512,7 @@ def main():
                         help="┬ show current profile in EC\n"
                              "└ replace \033[4mP\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
     parser.add_argument("-r", type=ec_read,
-                        help="┬ show realtime CPU+GPU temp and fan speed from EC\n"
+                        help="┬ show realtime CPU+GPU temp and fan speed from EC (and current Shift and Battery mode)\n"
                              "└ replace \033[4mR\033[0m with \033[4mPROFILE_NAME\033[0m\n ")
     parser.add_argument("-s", type=ec_set, nargs=2,
                         help="┬ set a single value into EC\n"
