@@ -16,7 +16,7 @@ list_s = []
 list_b = []
 
 # FORMATAGE DU TEXTE
-class txt:
+class Text:
 	YELLOW = '\033[32;1m'
 	ULINED = '\033[4m'
 	CLEAR  = '\033[0m'
@@ -45,30 +45,30 @@ def ec_boost(value):
 				file.seek(ba)
 				file.write(bytes((b_on,)))
 				print('\r')
-				print(txt.YELLOW+txt.TWO_COLUMN %(
+				print(Text.YELLOW+Text.TWO_COLUMN %(
 				      'Value',
-				      'set @ address')+txt.CLEAR)
-				print(txt.TWO_COLUMN %(
+				      'set @ address')+Text.CLEAR)
+				print(Text.TWO_COLUMN %(
 				      hex(b_on)+'('+str(b_on)+')',
 				      hex(ba)+'(byte'+str(ba)+')'))
 			elif list_b[1] == 'off':
 				file.seek(ba)
 				file.write(bytes((b_off,)))
 				print('\r')
-				print(txt.YELLOW+txt.TWO_COLUMN %(
+				print(Text.YELLOW+Text.TWO_COLUMN %(
 				      'Value',
-				      'set @ address')+txt.CLEAR)
-				print(txt.TWO_COLUMN %(
+				      'set @ address')+Text.CLEAR)
+				print(Text.TWO_COLUMN %(
 				      hex(b_off)+'('+str(b_off)+')',
 				      hex(ba)+'(byte'+str(ba)+')'))
 			else:
-				print('Error: Only '+txt.ULINED+'on'+txt.CLEAR+' and '+txt.ULINED+'off'+txt.CLEAR+' are valid.')
+				print('Error: Only '+Text.ULINED+'on'+Text.CLEAR+' and '+Text.ULINED+'off'+Text.CLEAR+' are valid.')
 
 # option -c
-class ec_checkC(Action):
+class ECCheck(Action):
 	def __call__(self, parser, namespace, values, option_string = None):
 		print('\nEC dump '+str(DUMP_POS))
-		print(txt.YELLOW+'       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F'+txt.CLEAR)
+		print(Text.YELLOW+'       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F'+Text.CLEAR)
 		os.system('od -A x -t x1z '+str(EC_IO_FILE))
 
 # option -f
@@ -105,13 +105,13 @@ def file_profile(value):
 				if i == 0:
 					print('\nProfile '+str(j)+' dump')
 					j += 1
-					print(txt.CPU_GPU)
-					print(txt.YELLOW+txt.FOUR_COLUMN %(
+					print(Text.CPU_GPU)
+					print(Text.YELLOW+Text.FOUR_COLUMN %(
 					      'Value',
 					      'set @ address',
 					      'Value',
-					      'set @ address')+txt.CLEAR)
-				print(txt.FOUR_COLUMN %(
+					      'set @ address')+Text.CLEAR)
+				print(Text.FOUR_COLUMN %(
 				      hex(list_ct[i+h])+'('+str(list_ct[i+h])+'°C)',
 				      hex(list_cta[i+h])+'(byte'+str(list_cta[i+h])+')',
 				      hex(list_gt[i+h])+'('+str(list_gt[i+h])+'°C)',
@@ -129,7 +129,7 @@ def file_profile(value):
 				list_gfs.append(int(file.read(1).hex(),16))
 				if i == 0:
 					print('\r')
-				print(txt.FOUR_COLUMN %(
+				print(Text.FOUR_COLUMN %(
 				      hex(list_cfs[i+h])+'('+str(list_cfs[i+h])+'%)',
 				      hex(list_cfsa[i+h])+'(byte'+str(list_cfsa[i+h])+')',
 				      hex(list_gfs[i+h])+'('+str(list_gfs[i+h])+'%)',
@@ -167,11 +167,11 @@ def ec_profile(value):
 			sfm = 'Basic'
 		elif fm == int(12):
 			sfm = 'Auto'
-		print(txt.YELLOW+txt.THREE_COLUMN %(
+		print(Text.YELLOW+Text.THREE_COLUMN %(
 		      'Value',
 		      'set @ address',
-		      'Fan mode')+txt.CLEAR)
-		print(txt.THREE_COLUMN %(
+		      'Fan mode')+Text.CLEAR)
+		print(Text.THREE_COLUMN %(
 		      hex(fm)+'('+str(fm)+')',
 		      hex(fma)+'(byte'+str(fma)+')',
 		      sfm+'\n'))
@@ -181,13 +181,13 @@ def ec_profile(value):
 			file.seek(list_gta[i])
 			list_gt.append(int(file.read(1).hex(),16))
 			if i == 0:
-				print(txt.CPU_GPU)
-				print(txt.YELLOW+txt.FOUR_COLUMN %(
+				print(Text.CPU_GPU)
+				print(Text.YELLOW+Text.FOUR_COLUMN %(
 				      'Value',
 				      'set @ address',
 				      'Value',
-				      'set @ address')+txt.CLEAR)
-			print(txt.FOUR_COLUMN %(
+				      'set @ address')+Text.CLEAR)
+			print(Text.FOUR_COLUMN %(
 			      hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
 			      hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
 			      hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
@@ -199,7 +199,7 @@ def ec_profile(value):
 			list_gfs.append(int(file.read(1).hex(),16))
 			if i == 0:
 				print('\r')
-			print(txt.FOUR_COLUMN %(
+			print(Text.FOUR_COLUMN %(
 			      hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
 			      hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
 			      hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
@@ -242,10 +242,10 @@ def ec_set(value):
 			file.seek(int(list_s[0],16))
 			file.write(bytes((int(list_s[1]),)))
 			print('\r')
-			print(txt.YELLOW+txt.TWO_COLUMN %(
+			print(Text.YELLOW+Text.TWO_COLUMN %(
 			      'Value',
-			      'set @ address')+txt.CLEAR)
-			print(txt.TWO_COLUMN %(
+			      'set @ address')+Text.CLEAR)
+			print(Text.TWO_COLUMN %(
 			      hex(int(list_s[1]))+'('+str(list_s[1])+')',
 			      list_s[0]+'(byte'+str(int(list_s[0],16))+')'))
 
@@ -288,11 +288,11 @@ def ec_write(value):
 			sfm = 'Basic'
 		elif fm == int(12):
 			sfm = 'Auto'
-		print(txt.YELLOW+txt.THREE_COLUMN %(
+		print(Text.YELLOW+Text.THREE_COLUMN %(
 		      'Value',
 		      'set @ address',
-		      'Fan mode')+txt.CLEAR)
-		print(txt.THREE_COLUMN %(
+		      'Fan mode')+Text.CLEAR)
+		print(Text.THREE_COLUMN %(
 		      hex(fm)+'('+str(fm)+')',
 		      hex(fma)+'(byte'+str(fma)+')',
 		      sfm+'\n'))
@@ -302,13 +302,13 @@ def ec_write(value):
 			file.seek(list_gta[i])
 			file.write(bytes((list_gt[i],)))
 			if i == 0:
-				print(txt.CPU_GPU)
-				print(txt.YELLOW+txt.FOUR_COLUMN %(
+				print(Text.CPU_GPU)
+				print(Text.YELLOW+Text.FOUR_COLUMN %(
 				      'Value',
 				      'set @ address',
 				      'Value',
-				      'set @ address')+txt.CLEAR)
-			print(txt.FOUR_COLUMN %(
+				      'set @ address')+Text.CLEAR)
+			print(Text.FOUR_COLUMN %(
 			      hex(list_ct[i])+'('+str(list_ct[i])+'°C)',
 			      hex(list_cta[i])+'(byte'+str(list_cta[i])+')',
 			      hex(list_gt[i])+'('+str(list_gt[i])+'°C)',
@@ -320,7 +320,7 @@ def ec_write(value):
 			file.write(bytes((list_gfs[i],)))
 			if i == 0:
 				print('\r')
-			print(txt.FOUR_COLUMN %(
+			print(Text.FOUR_COLUMN %(
 			      hex(list_cfs[i])+'('+str(list_cfs[i])+'%)',
 			      hex(list_cfsa[i])+'(byte'+str(list_cfsa[i])+')',
 			      hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
@@ -335,7 +335,7 @@ def main():
 ┌─ TIPS ──────────────────────────────────────────────────────────────────┐
 │ Set your config in '/etc/isw.conf'.                                     │
 │ Arguments order is relevant, -c and -p can be used twice. Example:      │
-│ isw -cw '''+txt.ULINED+'''PROFILE_NAME'''+txt.CLEAR+''' -c will show you EC dump before and after change.  │
+│ isw -cw '''+Text.ULINED+'''PROFILE_NAME'''+Text.CLEAR+''' -c will show you EC dump before and after change.  │
 ├─ SUPPORT ───────────────────────────────────────────────────────────────┤
 │ Help me support your laptop by providing following command output:      │
 │ isw -cp MSI_ADDRESS_DEFAULT                                             │
@@ -349,26 +349,26 @@ def main():
 ''')
 	parser.add_argument('-b', type = ec_boost, nargs = 2,
 	                    help = '┬ activate or disable CoolerBoost\n'
-	                           '├ replace 1st '+txt.ULINED+'B'+txt.CLEAR+' with '+txt.ULINED+'PROFILE_NAME'+txt.CLEAR+'\n'
-	                           '└ replace 2nd '+txt.ULINED+'B'+txt.CLEAR+' with '+txt.ULINED+'on'+txt.CLEAR+' OR '+txt.ULINED+'off'+txt.CLEAR+'\n ')
-	parser.add_argument('-c', action = ec_checkC, nargs = 0,
+	                           '├ replace 1st '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n'
+	                           '└ replace 2nd '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'on'+Text.CLEAR+' OR '+Text.ULINED+'off'+Text.CLEAR+'\n ')
+	parser.add_argument('-c', action = ECCheck, nargs = 0,
 	                    help = '─ show an EC dump\n ')
 	parser.add_argument('-f', type = file_profile,
 	                    help = '┬ show profile in EC update file\n'
-	                           '└ replace '+txt.ULINED+'F'+txt.CLEAR+' with '+txt.ULINED+'FILE_NAME'+txt.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'F'+Text.CLEAR+' with '+Text.ULINED+'FILE_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-p', type = ec_profile,
 	                    help = '┬ show current profile in EC\n'
-	                           '└ replace '+txt.ULINED+'P'+txt.CLEAR+' with '+txt.ULINED+'PROFILE_NAME'+txt.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-r', type = ec_read,
 	                    help = '┬ show realtime CPU+GPU temp and fan speed from EC\n'
-	                           '└ replace '+txt.ULINED+'R'+txt.CLEAR+' with '+txt.ULINED+'PROFILE_NAME'+txt.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'R'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-s', type = ec_set, nargs = 2,
 	                    help = '┬ set a single value into EC\n'
-	                           '├ replace 1st '+txt.ULINED+'S'+txt.CLEAR+' with '+txt.ULINED+'ADDRESS'+txt.CLEAR+' in hexadecimal (0x00)\n'
-	                           '└ replace 2nd '+txt.ULINED+'S'+txt.CLEAR+' with '+txt.ULINED+'VALUE'+txt.CLEAR+'   in decimal     (00)\n ')
+	                           '├ replace 1st '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'ADDRESS'+Text.CLEAR+' in hexadecimal (0x00)\n'
+	                           '└ replace 2nd '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'VALUE'+Text.CLEAR+'   in decimal     (00)\n ')
 	parser.add_argument('-w', type = ec_write,
 	                    help = '┬ write into EC\n'
-	                           '└ replace '+txt.ULINED+'W'+txt.CLEAR+' with '+txt.ULINED+'PROFILE_NAME'+txt.CLEAR+'')
+	                           '└ replace '+Text.ULINED+'W'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'')
 	if len(sys.argv) == 1:
 		parser.print_help(sys.stderr)
 	parser.parse_args()
