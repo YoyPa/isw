@@ -41,32 +41,31 @@ def ec_boost(value):
 		with open(CFG_FILE) as cfgfile:
 			cfgp = configparser.ConfigParser()
 			cfgp.read_file(cfgfile)
-			# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost
 			ap = cfgp.get(Store.list_b[0], 'address_profile')
-			ba = int(cfgp.get(ap, 'cooler_boost_address'),16)
-			b_on = int(cfgp.get(Store.list_b[0], 'cooler_boost_on'))
-			b_off = int(cfgp.get(Store.list_b[0], 'cooler_boost_off'))
+			cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
+			cb_on = int(cfgp.get(Store.list_b[0], 'cooler_boost_on'))
+			cb_off = int(cfgp.get(Store.list_b[0], 'cooler_boost_off'))
 		with open(EC_IO_FILE,'r+b') as file:
 			if Store.list_b[1] == 'on':
-				file.seek(ba)
-				file.write(bytes((b_on,)))
+				file.seek(cba)
+				file.write(bytes((cb_on,)))
 				print('\r')
 				print(Text.YELLOW+Text.TWO_COLUMN %(
 				      'Value',
 				      'set @ address')+Text.CLEAR)
 				print(Text.TWO_COLUMN %(
-				      hex(b_on)+'('+str(b_on)+')',
-				      hex(ba)+'(byte'+str(ba)+')'))
+				      hex(cb_on)+'('+str(cb_on)+')',
+				      hex(cba)+'(byte'+str(cba)+')'))
 			elif Store.list_b[1] == 'off':
-				file.seek(ba)
-				file.write(bytes((b_off,)))
+				file.seek(cba)
+				file.write(bytes((cb_off,)))
 				print('\r')
 				print(Text.YELLOW+Text.TWO_COLUMN %(
 				      'Value',
 				      'set @ address')+Text.CLEAR)
 				print(Text.TWO_COLUMN %(
-				      hex(b_off)+'('+str(b_off)+')',
-				      hex(ba)+'(byte'+str(ba)+')'))
+				      hex(cb_off)+'('+str(cb_off)+')',
+				      hex(cba)+'(byte'+str(cba)+')'))
 			else:
 				print('Error: Only '+Text.ULINED+'on'+Text.CLEAR+' and '+Text.ULINED+'off'+Text.CLEAR+' are valid.')
 
@@ -79,7 +78,6 @@ class ECCheck(Action):
 
 def file_profile(value):
 	# Option -f, show profile in EC update file
-	# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost
 	list_cta = [0xf801,0xf802,0xf803,0xf804,0xf805,0xf806,
 	            0xf841,0xf842,0xf843,0xf844,0xf845,0xf846,
 	            0xf881,0xf882,0xf883,0xf884,0xf885,0xf886,
@@ -147,7 +145,6 @@ def ec_profile(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
@@ -218,7 +215,6 @@ def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost
 		ap = cfgp.get(value, 'address_profile')
 		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
@@ -284,7 +280,6 @@ def ec_write(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		# c=cpu g=gpu t=temp f=fan s=speed a=address p=profile r=realtime m=mode b=coolerboost
 		list_cta = []
 		list_ct = []
 		list_cfsa = []
