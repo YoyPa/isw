@@ -21,7 +21,7 @@ class Text:
 	TWO_COLUMN = '%-11s %s'
 	THREE_COLUMN = '%-11s %-20s %s'
 	FOUR_COLUMN = '%-11s %-20s %-11s %s'
-	HEIGHT_COLUMN = '%-5s %-6s %-9s %-8s %-6s %-6s %-9s %s'
+	HEIGHT_COLUMN = '%-5s %-7s %-8s %-8s %-6s %-7s %-8s %s'
 	CPU_GPU = '-----------CPU-----------        -----------GPU-----------'
 	TEMP_FS = '┌─Temp─┬─Fan Speed──────┐        ┌─Temp─┬─Fan Speed──────┐'
 	TEMP_FS_END = '└──────┴────────────────┘        └──────┴────────────────┘'
@@ -222,8 +222,10 @@ def ec_read(value):
 		ap = cfgp.get(value, 'address_profile')
 		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
+		rcfra = int(cfgp.get(ap, 'realtime_cpu_fan_rpm_address'),16)
 		rgta = int(cfgp.get(ap, 'realtime_gpu_temp_address'),16)
 		rgfsa = int(cfgp.get(ap, 'realtime_gpu_fan_speed_address'),16)
+		rgfra = int(cfgp.get(ap, 'realtime_gpu_fan_rpm_address'),16)
 	print(Text.YELLOW+Text.CPU_GPU+Text.CLEAR)
 	print(Text.TEMP_FS)
 	try:
@@ -233,18 +235,26 @@ def ec_read(value):
 				temp_cpu = int(file.read(1).hex(),16)
 				file.seek(rcfsa)
 				fans_cpu = int(file.read(1).hex(),16)
+				file.seek(rcfra)
+				fanr_cpu = int(file.read(2).hex(),16)
 				file.seek(rgta)
 				temp_gpu = int(file.read(1).hex(),16)
 				file.seek(rgfsa)
 				fans_gpu = int(file.read(1).hex(),16)
+				file.seek(rgfra)
+				fanr_gpu = int(file.read(2).hex(),16)
+				if int(fanr_cpu) != 0:
+					fanr_cpu = 478000//int(fanr_cpu)
+				if int(fanr_gpu) != 0:
+					fanr_gpu = 478000//int(fanr_gpu)
 				print(Text.HEIGHT_COLUMN %(
 				      '│ '+str(temp_cpu)+'°C',
 				      '│ '+str(fans_cpu)+'% ',
-				      'RPM',
+				      str(fanr_cpu)+'RPM',
 				      '│',
 				      '│ '+str(temp_gpu)+'°C',
 				      '│ '+str(fans_gpu)+'% ',
-				      'RPM',
+				      str(fanr_gpu)+'RPM',
 				      '│'))
 				print(Text.TEMP_FS_END+Text.CURSOR_UP+Text.CURSOR_UP)
 				time.sleep(2)
