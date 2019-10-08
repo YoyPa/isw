@@ -167,6 +167,8 @@ def ec_profile(value):
 			sfm = 'Basic'
 		elif fm == int(12):
 			sfm = 'Auto'
+		else:
+			sfm = 'Unknown'
 		print(Text.YELLOW+Text.THREE_COLUMN %(
 		      'Value',
 		      'set @ address',
@@ -288,6 +290,8 @@ def ec_write(value):
 			sfm = 'Basic'
 		elif fm == int(12):
 			sfm = 'Auto'
+		else:
+			sfm = 'Unknown'
 		print(Text.YELLOW+Text.THREE_COLUMN %(
 		      'Value',
 		      'set @ address',
