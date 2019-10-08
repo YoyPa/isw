@@ -2,6 +2,7 @@
 
 import sys
 import os
+import time
 import configparser
 from argparse import ArgumentParser
 from argparse import Action
@@ -15,17 +16,21 @@ CFG_FILE = '/etc/isw.conf'
 class Text:
 	YELLOW = '\033[32;1m'
 	ULINED = '\033[4m'
-	CLEAR  = '\033[0m'
+	CLEAR = '\033[0m'
+	CURSOR_UP = '\033[A'
 	TWO_COLUMN = '%-11s %s'
 	THREE_COLUMN = '%-11s %-20s %s'
 	FOUR_COLUMN = '%-11s %-20s %-11s %s'
+	HEIGHT_COLUMN = '%-5s %-6s %-9s %-8s %-6s %-6s %-9s %s'
 	CPU_GPU = '-----------CPU-----------        -----------GPU-----------'
+	TEMP_FS = '┌─Temp─┬─Fan Speed──────┐        ┌─Temp─┬─Fan Speed──────┐'
+	TEMP_FS_END = '└──────┴────────────────┘        └──────┴────────────────┘'
 
 # Storing vars
 class Store:
 	dump_pos = ''
-	list_s = []
 	list_b = []
+	list_s = []
 
 # Functions
 def ec_boost(value):
@@ -219,21 +224,32 @@ def ec_read(value):
 		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
 		rgta = int(cfgp.get(ap, 'realtime_gpu_temp_address'),16)
 		rgfsa = int(cfgp.get(ap, 'realtime_gpu_fan_speed_address'),16)
-	with open(EC_IO_FILE,'rb') as file:
-		file.seek(rcta)
-		temp_cpu = int(file.read(1).hex(),16)
-		file.seek(rcfsa)
-		fans_cpu = int(file.read(1).hex(),16)
-		file.seek(rgta)
-		temp_gpu = int(file.read(1).hex(),16)
-		file.seek(rgfsa)
-		fans_gpu = int(file.read(1).hex(),16)
-		print('CPU')
-		print('└─temp     (°C): '+str(temp_cpu))
-		print('└─fan speed (%): '+str(fans_cpu))
-		print('GPU')
-		print('└─temp     (°C): '+str(temp_gpu))
-		print('└─fan speed (%): '+str(fans_gpu))
+	print(Text.YELLOW+Text.CPU_GPU+Text.CLEAR)
+	print(Text.TEMP_FS)
+	try:
+		while True:
+			with open(EC_IO_FILE,'rb') as file:
+				file.seek(rcta)
+				temp_cpu = int(file.read(1).hex(),16)
+				file.seek(rcfsa)
+				fans_cpu = int(file.read(1).hex(),16)
+				file.seek(rgta)
+				temp_gpu = int(file.read(1).hex(),16)
+				file.seek(rgfsa)
+				fans_gpu = int(file.read(1).hex(),16)
+				print(Text.HEIGHT_COLUMN %(
+				      '│ '+str(temp_cpu)+'°C',
+				      '│ '+str(fans_cpu)+'% ',
+				      'RPM',
+				      '│',
+				      '│ '+str(temp_gpu)+'°C',
+				      '│ '+str(fans_gpu)+'% ',
+				      'RPM',
+				      '│'))
+				print(Text.TEMP_FS_END+Text.CURSOR_UP+Text.CURSOR_UP)
+				time.sleep(2)
+	except:
+		print()
 
 def ec_set(value):
 	# Option -s, set a single value into EC
