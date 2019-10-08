@@ -359,7 +359,7 @@ def main():
 ┌─ TIPS ──────────────────────────────────────────────────────────────────┐
 │ Set your config in '/etc/isw.conf'.                                     │
 │ Arguments order is relevant, -c and -p can be used twice. Example:      │
-│ isw -cw '''+Text.ULINED+'''PROFILE_NAME'''+Text.CLEAR+''' -c will show you EC dump before and after change.  │
+│ isw -cw '''+Text.ULINED+'''SECTION_NAME'''+Text.CLEAR+''' -c will show you EC dump before and after change.  │
 ├─ SUPPORT ───────────────────────────────────────────────────────────────┤
 │ Help me support your laptop by providing following command output:      │
 │ isw -cp MSI_ADDRESS_DEFAULT                                             │
@@ -373,7 +373,7 @@ def main():
 ''')
 	parser.add_argument('-b', type = ec_boost, nargs = 2,
 	                    help = '┬ activate or disable CoolerBoost\n'
-	                           '├ replace 1st '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n'
+	                           '├ replace 1st '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n'
 	                           '└ replace 2nd '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'on'+Text.CLEAR+' OR '+Text.ULINED+'off'+Text.CLEAR+'\n ')
 	parser.add_argument('-c', action = ECCheck, nargs = 0,
 	                    help = '─ show an EC dump\n ')
@@ -382,17 +382,17 @@ def main():
 	                           '└ replace '+Text.ULINED+'F'+Text.CLEAR+' with '+Text.ULINED+'FILE_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-p', type = ec_profile,
 	                    help = '┬ show current profile in EC\n'
-	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-r', type = ec_read,
 	                    help = '┬ show realtime CPU+GPU temp and fan speed from EC\n'
-	                           '└ replace '+Text.ULINED+'R'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'R'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-s', type = ec_set, nargs = 2,
 	                    help = '┬ set a single value into EC\n'
 	                           '├ replace 1st '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'ADDRESS'+Text.CLEAR+' in hexadecimal (0x00)\n'
 	                           '└ replace 2nd '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'VALUE'+Text.CLEAR+'   in decimal     (00)\n ')
 	parser.add_argument('-w', type = ec_write,
 	                    help = '┬ write into EC\n'
-	                           '└ replace '+Text.ULINED+'W'+Text.CLEAR+' with '+Text.ULINED+'PROFILE_NAME'+Text.CLEAR+'')
+	                           '└ replace '+Text.ULINED+'W'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'')
 	if len(sys.argv) == 1:
 		parser.print_help(sys.stderr)
 	parser.parse_args()
