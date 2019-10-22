@@ -29,45 +29,41 @@ class Text:
 # Storing vars
 class Store:
 	dump_pos = ''
-	list_b = []
 	list_s = []
 
 # Functions
 def ec_boost(value):
 	# Option -b, activate or disable CoolerBoost
-	# NB: ArgumentParser will launch the function twice with a different value instead of making a list
-	Store.list_b.append(value)
-	if len(Store.list_b) == 2:
-		with open(CFG_FILE) as cfgfile:
-			cfgp = configparser.ConfigParser()
-			cfgp.read_file(cfgfile)
-			ap = cfgp.get(Store.list_b[0], 'address_profile')
-			cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
-			cb_on = int(cfgp.get(Store.list_b[0], 'cooler_boost_on'))
-			cb_off = int(cfgp.get(Store.list_b[0], 'cooler_boost_off'))
-		with open(EC_IO_FILE,'r+b') as file:
-			if Store.list_b[1] == 'on':
-				file.seek(cba)
-				file.write(bytes((cb_on,)))
-				print('\r')
-				print(Text.YELLOW+Text.TWO_COLUMN %(
-				      'Value',
-				      'set @ address')+Text.CLEAR)
-				print(Text.TWO_COLUMN %(
-				      hex(cb_on)+'('+str(cb_on)+')',
-				      hex(cba)+'(byte'+str(cba)+')'))
-			elif Store.list_b[1] == 'off':
-				file.seek(cba)
-				file.write(bytes((cb_off,)))
-				print('\r')
-				print(Text.YELLOW+Text.TWO_COLUMN %(
-				      'Value',
-				      'set @ address')+Text.CLEAR)
-				print(Text.TWO_COLUMN %(
-				      hex(cb_off)+'('+str(cb_off)+')',
-				      hex(cba)+'(byte'+str(cba)+')'))
-			else:
-				print('Error: Only '+Text.ULINED+'on'+Text.CLEAR+' and '+Text.ULINED+'off'+Text.CLEAR+' are valid.')
+	with open(CFG_FILE) as cfgfile:
+		cfgp = configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		ap = cfgp.get('COOLER_BOOST', 'address_profile')
+		cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
+		cb_on = int(cfgp.get('COOLER_BOOST', 'cooler_boost_on'))
+		cb_off = int(cfgp.get('COOLER_BOOST', 'cooler_boost_off'))
+	with open(EC_IO_FILE,'r+b') as file:
+		if value == 'on':
+			file.seek(cba)
+			file.write(bytes((cb_on,)))
+			print('\r')
+			print(Text.YELLOW+Text.TWO_COLUMN %(
+			      'Value',
+			      'set @ address')+Text.CLEAR)
+			print(Text.TWO_COLUMN %(
+			      hex(cb_on)+'('+str(cb_on)+')',
+			      hex(cba)+'(byte'+str(cba)+')'))
+		elif value == 'off':
+			file.seek(cba)
+			file.write(bytes((cb_off,)))
+			print('\r')
+			print(Text.YELLOW+Text.TWO_COLUMN %(
+			      'Value',
+			      'set @ address')+Text.CLEAR)
+			print(Text.TWO_COLUMN %(
+			      hex(cb_off)+'('+str(cb_off)+')',
+			      hex(cba)+'(byte'+str(cba)+')'))
+		else:
+			print('Error: Only '+Text.ULINED+'on'+Text.CLEAR+' and '+Text.ULINED+'off'+Text.CLEAR+' are valid.')
 
 class ECCheck(Action):
 	# Option -c, show an EC dump
@@ -371,10 +367,9 @@ def main():
 │ It means Ice-Sealed Wyvern in opposition to MSI's 'unleash the dragon'  │
 └─────────────────────────────────────────────────────────────────────────┘
 ''')
-	parser.add_argument('-b', type = ec_boost, nargs = 2,
-	                    help = '┬ activate or disable CoolerBoost\n'
-	                           '├ replace 1st '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n'
-	                           '└ replace 2nd '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'on'+Text.CLEAR+' OR '+Text.ULINED+'off'+Text.CLEAR+'\n ')
+	parser.add_argument('-b', type = ec_boost,
+	                    help = '┬ enable or disable CoolerBoost\n'
+	                           '└ replace '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'on'+Text.CLEAR+' OR '+Text.ULINED+'off'+Text.CLEAR+'\n ')
 	parser.add_argument('-c', action = ECCheck, nargs = 0,
 	                    help = '─ show an EC dump\n ')
 	parser.add_argument('-f', type = file_profile,
