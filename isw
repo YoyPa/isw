@@ -31,39 +31,22 @@ class Store:
 	dump_pos = ''
 	list_s = []
 
-# Functions
+# First level functions
 def ec_boost(value):
-	# Option -b, activate or disable CoolerBoost
+	# Option -b, enable or disable CoolerBoost
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		ap = cfgp.get('COOLER_BOOST', 'address_profile')
 		cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
-		cb_on = int(cfgp.get('COOLER_BOOST', 'cooler_boost_on'))
 		cb_off = int(cfgp.get('COOLER_BOOST', 'cooler_boost_off'))
-	with open(EC_IO_FILE,'r+b') as file:
-		if value == 'on':
-			file.seek(cba)
-			file.write(bytes((cb_on,)))
-			print('\r')
-			print(Text.YELLOW+Text.TWO_COLUMN %(
-			      'Value',
-			      'set @ address')+Text.CLEAR)
-			print(Text.TWO_COLUMN %(
-			      hex(cb_on)+'('+str(cb_on)+')',
-			      hex(cba)+'(byte'+str(cba)+')'))
-		elif value == 'off':
-			file.seek(cba)
-			file.write(bytes((cb_off,)))
-			print('\r')
-			print(Text.YELLOW+Text.TWO_COLUMN %(
-			      'Value',
-			      'set @ address')+Text.CLEAR)
-			print(Text.TWO_COLUMN %(
-			      hex(cb_off)+'('+str(cb_off)+')',
-			      hex(cba)+'(byte'+str(cba)+')'))
+		cb_on = int(cfgp.get('COOLER_BOOST', 'cooler_boost_on'))
+		if value == 'off':
+			single_write(cba, cb_off)
+		elif value == 'on':
+			single_write(cba, cb_on)
 		else:
-			print('Error: Only '+Text.ULINED+'on'+Text.CLEAR+' and '+Text.ULINED+'off'+Text.CLEAR+' are valid.')
+			print('Error: Only '+Text.ULINED+'off'+Text.CLEAR+' and '+Text.ULINED+'on'+Text.CLEAR+' are valid.')
 
 class ECCheck(Action):
 	# Option -c, show an EC dump
@@ -276,16 +259,26 @@ def ec_set(value):
 	# NB: ArgumentParser will launch the function twice with a different value instead of making a list
 	Store.list_s.append(value)
 	if len(Store.list_s) == 2:
-		with open(EC_IO_FILE,'r+b') as file:
-			file.seek(int(Store.list_s[0],16))
-			file.write(bytes((int(Store.list_s[1]),)))
-			print('\r')
-			print(Text.YELLOW+Text.TWO_COLUMN %(
-			      'Value',
-			      'set @ address')+Text.CLEAR)
-			print(Text.TWO_COLUMN %(
-			      hex(int(Store.list_s[1]))+'('+str(Store.list_s[1])+')',
-			      Store.list_s[0]+'(byte'+str(int(Store.list_s[0],16))+')'))
+		single_write(int(Store.list_s[0],16), int(Store.list_s[1]))
+
+def ec_usb_backlight(value):
+	# Option -u, enable or disable usb backlight
+	with open(CFG_FILE) as cfgfile:
+		cfgp = configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		ap = cfgp.get('USB_BACKLIGHT', 'address_profile')
+		uba = int(cfgp.get(ap, 'usb_backlight_address'),16)
+		ub_off = int(cfgp.get('USB_BACKLIGHT', 'usb_backlight_off'))
+		ub_half = int(cfgp.get('USB_BACKLIGHT', 'usb_backlight_half'))
+		ub_full = int(cfgp.get('USB_BACKLIGHT', 'usb_backlight_full'))
+		if value == 'off':
+			single_write(uba, ub_off)
+		elif value == 'half':
+			single_write(uba, ub_half)
+		elif value == 'full':
+			single_write(uba, ub_full)
+		else:
+			print('Error: Only '+Text.ULINED+'off'+Text.CLEAR+', '+Text.ULINED+'half'+Text.CLEAR+' and '+Text.ULINED+'full'+Text.CLEAR+' are valid.')
 
 def ec_write(value):
 	# Option -w, write into EC
@@ -364,6 +357,20 @@ def ec_write(value):
 			      hex(list_gfs[i])+'('+str(list_gfs[i])+'%)',
 			      hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'))
 
+# Second level functions
+def single_write(address, value):
+	# Write a single value into EC, used by options: -b -s -u
+	with open(EC_IO_FILE,'r+b') as file:
+		file.seek(address)
+		file.write(bytes((value,)))
+		print('\r')
+		print(Text.YELLOW+Text.TWO_COLUMN %(
+		      'Value',
+		      'set @ address')+Text.CLEAR)
+		print(Text.TWO_COLUMN %(
+		      hex(value)+'('+str(value)+')',
+		      hex(address)+'(byte'+str(address)+')'))
+
 def main():
 	# ArgumentParser deal with option/argument handling
 	# 'type =' is used to launch a function, having an argument is mandatory
@@ -387,12 +394,12 @@ def main():
 ''')
 	parser.add_argument('-b', type = ec_boost,
 	                    help = '┬ enable or disable CoolerBoost\n'
-	                           '└ replace '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'on'+Text.CLEAR+' OR '+Text.ULINED+'off'+Text.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'B'+Text.CLEAR+' with '+Text.ULINED+'off'+Text.CLEAR+' OR '+Text.ULINED+'on'+Text.CLEAR+'\n ')
 	parser.add_argument('-c', action = ECCheck, nargs = 0,
 	                    help = '─ show an EC dump\n ')
-	parser.add_argument('-f', type = file_profile,
+	parser.add_argument('-f', '--file', type = file_profile,
 	                    help = '┬ show profile in EC update file\n'
-	                           '└ replace '+Text.ULINED+'F'+Text.CLEAR+' with '+Text.ULINED+'FILE_NAME'+Text.CLEAR+'\n ')
+	                           '└ replace '+Text.ULINED+'FILE'+Text.CLEAR+' with '+Text.ULINED+'FILE_NAME'+Text.CLEAR+'\n ')
 	parser.add_argument('-p', type = ec_profile,
 	                    help = '┬ show current profile in EC\n'
 	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n ')
@@ -403,6 +410,9 @@ def main():
 	                    help = '┬ set a single value into EC\n'
 	                           '├ replace 1st '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'ADDRESS'+Text.CLEAR+' in hexadecimal (0x00)\n'
 	                           '└ replace 2nd '+Text.ULINED+'S'+Text.CLEAR+' with '+Text.ULINED+'VALUE'+Text.CLEAR+'   in decimal     (00)\n ')
+	parser.add_argument('-u', '--usb', type = ec_usb_backlight,
+	                    help = '┬ enable or disable usb backlight\n'
+	                           '└ replace '+Text.ULINED+'USB'+Text.CLEAR+' with '+Text.ULINED+'off'+Text.CLEAR+', '+Text.ULINED+'half'+Text.CLEAR+' OR '+Text.ULINED+'full'+Text.CLEAR+'\n ')
 	parser.add_argument('-w', type = ec_write,
 	                    help = '┬ write into EC\n'
 	                           '└ replace '+Text.ULINED+'W'+Text.CLEAR+' with '+Text.ULINED+'SECTION_NAME'+Text.CLEAR+'')
