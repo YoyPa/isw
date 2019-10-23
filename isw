@@ -90,40 +90,29 @@ def file_profile(value):
 	             0xf91b,0xf91c,0xf91d,0xf91e,0xf91f,0xf920,0xf921]		#Seen in old 16J1EMS1.506/16F4EMS1.517
 	list_gfs = []
 	with open(value,'r+b') as file:
-		j = 1
+		j = 0
 		for h in range(0,37,6):
+			j += 1
+			print('\nPotential profile '+str(j)+' dump')
+			print(Text.CPU_GPU)
+			print(Text.YELLOW+Text.FOUR_COLUMN %(
+			      'Value',
+			      'set @ address',
+			      'Value',
+			      'set @ address')+Text.CLEAR)
 			for i in range(6):
 				file.seek(list_cta[i+h])
 				list_ct.append(int(file.read(1).hex(),16))
 				file.seek(list_gta[i+h])
 				list_gt.append(int(file.read(1).hex(),16))
-				if i == 0:
-					print('\nPotential profile '+str(j)+' dump')
-					j += 1
-					print(Text.CPU_GPU)
-					print(Text.YELLOW+Text.FOUR_COLUMN %(
-					      'Value',
-					      'set @ address',
-					      'Value',
-					      'set @ address')+Text.CLEAR)
 				print(Text.FOUR_COLUMN %(
 				      hex(list_ct[i+h])+'('+str(list_ct[i+h])+'°C)',
 				      hex(list_cta[i+h])+'(byte'+str(list_cta[i+h])+')',
 				      hex(list_gt[i+h])+'('+str(list_gt[i+h])+'°C)',
 				      hex(list_gta[i+h])+'(byte'+str(list_gta[i+h])+')'))
+			if h != 0:
+				h += j-1
 			for i in range(7):
-				if h == 6:
-					h += 1
-				if h == 12:
-					h += 2
-				if h == 18:
-					h += 3
-				if h == 24:
-					h += 4
-				if h == 30:
-					h += 5
-				if h == 36:
-					h += 6
 				file.seek(list_cfsa[i+h])
 				list_cfs.append(int(file.read(1).hex(),16))
 				file.seek(list_gfsa[i+h])
