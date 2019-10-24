@@ -126,31 +126,6 @@ def file_profile(value):
 				      hex(list_gfs[i+h])+'('+str(list_gfs[i+h])+'%)',
 				      hex(list_gfsa[i+h])+'(byte'+str(list_gfsa[i+h])+')'))
 
-def ec_mode(value):
-	# Option -m, set shift mode
-	with open(CFG_FILE) as cfgfile:
-		cfgp = configparser.ConfigParser()
-		cfgp.read_file(cfgfile)
-		ap = cfgp.get('SHIFT_MODE', 'address_profile')
-		sma = int(cfgp.get(ap, 'shift_mode_address'),16)
-		sm_eco = int(cfgp.get('SHIFT_MODE', 'shift_mode_eco'))
-		sm_comfort = int(cfgp.get('SHIFT_MODE', 'shift_mode_comfort'))
-		sm_sport = int(cfgp.get('SHIFT_MODE', 'shift_mode_sport'))
-		sm_turbo = int(cfgp.get('SHIFT_MODE', 'shift_mode_turbo'))
-		if value == 'eco':
-			single_write(sma, sm_eco)
-		elif value == 'comfort':
-			single_write(sma, sm_comfort)
-		elif value == 'sport':
-			single_write(sma, sm_sport)
-		elif value == 'turbo':
-			single_write(sma, sm_turbo)
-		else:
-			print('Error: Only '+Text.ULINED+'eco'+Text.CLEAR+', '
-			      +Text.ULINED+'comfort'+Text.CLEAR+', '
-			      +Text.ULINED+'sport'+Text.CLEAR+' and '
-			      +Text.ULINED+'turbo'+Text.CLEAR+' are valid.')
-
 def ec_profile(value):
 	# Option -p, show current profile in EC
 	print('\nProfile dump '+str(Store.dump_pos))
@@ -167,7 +142,6 @@ def ec_profile(value):
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
-		sma = int(cfgp.get(ap, 'shift_mode_address'),16)
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -193,26 +167,6 @@ def ec_profile(value):
 		      hex(fm)+'('+str(fm)+')',
 		      hex(fma)+'(byte'+str(fma)+')',
 		      sfm+'\n'))
-		file.seek(sma)
-		sm = int(file.read(1).hex(),16)
-		if sm == int(194):
-			ssm = 'Eco'
-		elif sm == int(193):
-			ssm = 'Comfort'
-		elif sm == int(192):
-			ssm = 'Sport'
-		elif sm == int(195):
-			ssm = 'Turbo'
-		else:
-			ssm = 'Unknown'
-		print(Text.YELLOW+Text.THREE_COLUMN %(
-		      'Value',
-		      'set @ address',
-		      'Shift mode')+Text.CLEAR)
-		print(Text.THREE_COLUMN %(
-		      hex(sm)+'('+str(sm)+')',
-		      hex(sma)+'(byte'+str(sma)+')',
-		      ssm+'\n'))
 		for i in range(6):
 			file.seek(list_cta[i])
 			list_ct.append(int(file.read(1).hex(),16))
@@ -441,13 +395,6 @@ def main():
 	                    help = '┬ show profile in EC update file\n'
 	                           '└ replace '+Text.ULINED+'FILE'+Text.CLEAR+' with '
 	                           +Text.ULINED+'FILE_NAME'+Text.CLEAR+'\n ')
-	parser.add_argument('-m', '--mode', type = ec_mode,
-	                    help = '┬ set shift mode\n'
-	                           '└ replace '+Text.ULINED+'MODE'+Text.CLEAR+' with '
-	                           +Text.ULINED+'eco'+Text.CLEAR+', '
-	                           +Text.ULINED+'comfort'+Text.CLEAR+', '
-	                           +Text.ULINED+'sport'+Text.CLEAR+' OR '
-	                           +Text.ULINED+'turbo'+Text.CLEAR+'\n ')
 	parser.add_argument('-p', type = ec_profile,
 	                    help = '┬ show current profile in EC\n'
 	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '
