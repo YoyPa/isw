@@ -34,52 +34,56 @@ yay -S isw
 
 ## How to use it ?
 ```
-usage: isw [-h] [-b B B] [-c] [-f F] [-p P] [-r R] [-s S S] [-w W]
+usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r R] [-s S S] [-u USB] [-w W]
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -b B B      ┬ activate or disable CoolerBoost
-              ├ replace 1st B with PROFILE_NAME
-              └ replace 2nd B with on OR off
+  -h, --help            show this help message and exit
+  -b B                  ┬ enable or disable CoolerBoost
+                        └ replace B with off OR on
 
-  -c          ─ show an EC dump
+  -c                    ─ show an EC dump
 
-  -f F        ┬ show profile in EC update file
-              └ replace F with FILE_NAME
+  -f FILE, --file FILE  ┬ show profile in EC update file
+                        └ replace FILE with FILE_NAME
 
-  -p P        ┬ show current profile in EC
-              └ replace P with PROFILE_NAME
+  -p P                  ┬ show current profile in EC
+                        └ replace P with SECTION_NAME
 
-  -r R        ┬ show realtime CPU+GPU temp and fan speed from EC
-              └ replace R with PROFILE_NAME
+  -r R                  ┬ show realtime CPU+GPU temp and fan speed from EC
+                        └ replace R with SECTION_NAME
 
-  -s S S      ┬ set a single value into EC
-              ├ replace 1st S with ADDRESS in hexadecimal (0x00)
-              └ replace 2nd S with VALUE   in decimal     (00)
+  -s S S                ┬ set a single value into EC
+                        ├ replace 1st S with ADDRESS in hexadecimal (0x00)
+                        └ replace 2nd S with VALUE   in decimal     (00)
 
-  -w W        ┬ write into EC
-              └ replace W with PROFILE_NAME
+  -u USB, --usb USB     ┬ set usb backlight level
+                        └ replace USB with off, half OR full
+
+  -w W                  ┬ write into EC
+                        └ replace W with SECTION_NAME
 
 ┌─ TIPS ──────────────────────────────────────────────────────────────────┐
 │ Set your config in '/etc/isw.conf'.                                     │
 │ Arguments order is relevant, -c and -p can be used twice. Example:      │
-│ isw -cw PROFILE_NAME -c will show you EC dump before and after change.  │
+│ isw -cw SECTION_NAME -c will show you EC dump before and after change.  │
 ├─ SUPPORT ───────────────────────────────────────────────────────────────┤
 │ Help me support your laptop by providing following command output:      │
 │ isw -cp MSI_ADDRESS_DEFAULT                                             │
 │ via https://github.com/YoyPa/isw (open an issue).                       │
+│ Make sure your dump is made before altering EC with isw, you can reset  │
+│ your EC with a reboot or by changing power source.                      │
 ├─ NAME ──────────────────────────────────────────────────────────────────┤
 │ ISW is MSI at 180°                                                      │
-│ It mean Ice-Sealed Wyvern in opposition to MSI's "unleash the dragon"   │
+│ It means Ice-Sealed Wyvern in opposition to MSI's 'unleash the dragon'  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 <b>NB: all option exept -h need priviledges.</b>
 
 
 ## Launch at startup/resume
-You can launch ```isw -w [PROFILE_NAME]``` at startup/resume via systemd with isw@.service (need priviledges):
+You can launch ```isw -w [SECTION_NAME]``` at startup/resume via systemd with isw@.service (need priviledges):
 ```
-systemctl enable isw@[PROFILE_NAME].service
+systemctl enable isw@[SECTION_NAME].service
 ```
 
 ## TODO
@@ -87,5 +91,5 @@ systemctl enable isw@[PROFILE_NAME].service
 - Daemonisation
 	- Launch at startup                            done
 	- launch after resume (hibernation/suspend)    done
-	- Launch at event(power source change)         seems hard to achieve
+	- Launch at event(power source change)
 ```
