@@ -27,12 +27,13 @@ yay -S isw
 - It need ```ec_sys``` module with option ```write_support=1```, there are two scenario to set that:
   - ec_sys is a builtin kernel module:
     - add ```ec_sys.write_support=1``` in ```/etc/default/grub``` (Arch AUR package can't do it for you).
-    - then update your grub and reboot.
+    - then update your grub with ```update-grub``` and reboot.
   - ec_sys is not a builtin kernel module:
     - copy both ```isw-ec_sys.conf``` files provided (/etc/mod[...]) with same path (Arch AUR package will do it for you).
     - then reboot OR ```modprobe ec_sys write_support=1```.
 
 ## How to use it ?
+### Current --help output
 ```
 usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r R] [-s S S] [-u USB] [-w W]
 
@@ -77,8 +78,13 @@ optional arguments:
 │ It means Ice-Sealed Wyvern in opposition to MSI's 'unleash the dragon'  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
-<b>NB: all option exept -h need priviledges.</b>
+<b>NB: all option exept -h and -f need priviledges.</b>
 
+### An example
+SECTION_NAME refer to the motherboard name inside ```isw.conf```, if for example you have a GS40_6QE your SECTION_NAME would be 14A1EMS1.
+If you want to change temperature treshold and/or fan speed for cpu and/or gpu, you have to edit the corresponding section in ```isw.conf``` to set the wanted values and use ```isw -w 14A1EMS1``` to apply.
+If you want to check the current temperature and fan speed you will have to type ```isw -r 14A1EMS1```.
+Don't forget to read the comment at the beginning of ```isw.conf```, it contain some helpfull info.
 
 ## Launch at startup/resume
 You can launch ```isw -w [SECTION_NAME]``` at startup/resume via systemd with isw@.service (need priviledges):
