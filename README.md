@@ -81,9 +81,12 @@ optional arguments:
 <b>NB: all option exept -h and -f need priviledges.</b>
 
 ### An example
-SECTION_NAME refer to the motherboard name inside ```isw.conf```, if for example you have a GS40_6QE your SECTION_NAME would be 14A1EMS1.
+<b>SECTION_NAME</b> refer to the motherboard name inside ```isw.conf```, if <b>for example</b> you have a <b>GS40_6QE</b> your <b>SECTION_NAME</b> would be <b>14A1EMS1</b>.
+
 If you want to change temperature treshold and/or fan speed for cpu and/or gpu, you have to edit the corresponding section in ```isw.conf``` to set the wanted values and use ```isw -w 14A1EMS1``` to apply.
+
 If you want to check the current temperature and fan speed you will have to type ```isw -r 14A1EMS1```.
+
 Don't forget to read the comment at the beginning of ```isw.conf```, it contain some helpfull info.
 
 ## Launch at startup/resume
