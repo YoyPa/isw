@@ -19,6 +19,8 @@ class Text:
 	ULINED = '\033[4m'
 	CLEAR = '\033[0m'
 	CURSOR_UP = '\033[A'
+	CURSOR_DOWN = '\033[B'
+	CURSOR_LEFT = '\033[D'
 	TWO_COLUMN = '%-11s %s'
 	THREE_COLUMN = '%-11s %-20s %s'
 	FOUR_COLUMN = '%-11s %-20s %-11s %s'
@@ -203,47 +205,45 @@ def ec_read(value):
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		ap = cfgp.get(value, 'address_profile')
-		rcta = int(cfgp.get(ap, 'realtime_cpu_temp_address'),16)
-		rcfsa = int(cfgp.get(ap, 'realtime_cpu_fan_speed_address'),16)
-		rcfra = int(cfgp.get(ap, 'realtime_cpu_fan_rpm_address'),16)
-		rgta = int(cfgp.get(ap, 'realtime_gpu_temp_address'),16)
-		rgfsa = int(cfgp.get(ap, 'realtime_gpu_fan_speed_address'),16)
-		rgfra = int(cfgp.get(ap, 'realtime_gpu_fan_rpm_address'),16)
+		rcta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_cpu_temp_address'),16)
+		rcfsa = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_cpu_fan_speed_address'),16)
+		rcfra = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_cpu_fan_rpm_address'),16)
+		rgta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_gpu_temp_address'),16)
+		rgfsa = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_gpu_fan_speed_address'),16)
+		rgfra = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_gpu_fan_rpm_address'),16)
 	print(Text.YELLOW+Text.CPU_GPU+Text.CLEAR)
 	print(Text.TEMP_FS)
 	try:
-		while True:
-			with open(EC_IO_FILE,'rb') as file:
-				file.seek(rcta)
-				temp_cpu = int(file.read(1).hex(),16)
-				file.seek(rcfsa)
-				fans_cpu = int(file.read(1).hex(),16)
-				file.seek(rcfra)
-				fanr_cpu = int(file.read(2).hex(),16)
-				file.seek(rgta)
-				temp_gpu = int(file.read(1).hex(),16)
-				file.seek(rgfsa)
-				fans_gpu = int(file.read(1).hex(),16)
-				file.seek(rgfra)
-				fanr_gpu = int(file.read(2).hex(),16)
-				if int(fanr_cpu) != 0:
-					fanr_cpu = 478000//int(fanr_cpu)
-				if int(fanr_gpu) != 0:
-					fanr_gpu = 478000//int(fanr_gpu)
+		if int(value) != 0:
+			for i in range (0, int(value)):
+				data = read_temp_fs_rpm(rcta, rcfsa, rcfra, rgta, rgfsa, rgfra)
 				print(Text.HEIGHT_COLUMN %(
-				      '│ '+str(temp_cpu)+'°C',
-				      '│ '+str(fans_cpu)+'% ',
-				      str(fanr_cpu)+'RPM',
+				      '│ '+str(data[0])+'°C',
+				      '│ '+str(data[1])+'% ',
+				      str(data[2])+'RPM',
 				      '│',
-				      '│ '+str(temp_gpu)+'°C',
-				      '│ '+str(fans_gpu)+'% ',
-				      str(fanr_gpu)+'RPM',
+				      '│ '+str(data[3])+'°C',
+				      '│ '+str(data[4])+'% ',
+				      str(data[5])+'RPM',
+				      '│'))
+				time.sleep(2)
+		else:
+			while True:
+				data = read_temp_fs_rpm(rcta, rcfsa, rcfra, rgta, rgfsa, rgfra)
+				print(Text.HEIGHT_COLUMN %(
+				      '│ '+str(data[0])+'°C',
+				      '│ '+str(data[1])+'% ',
+				      str(data[2])+'RPM',
+				      '│',
+				      '│ '+str(data[3])+'°C',
+				      '│ '+str(data[4])+'% ',
+				      str(data[5])+'RPM',
 				      '│'))
 				print(Text.TEMP_FS_END+Text.CURSOR_UP+Text.CURSOR_UP)
 				time.sleep(2)
+		print(Text.TEMP_FS_END)
 	except:
-		print()
+		print(Text.CURSOR_DOWN+Text.CURSOR_LEFT+Text.CURSOR_LEFT+Text.TEMP_FS_END)
 
 def ec_set(value):
 	# Option -s, set a single value into EC
@@ -351,6 +351,27 @@ def ec_write(value):
 			      hex(list_gfsa[i])+'(byte'+str(list_gfsa[i])+')'))
 
 # Second level functions
+def read_temp_fs_rpm(rcta, rcfsa, rcfra, rgta, rgfsa, rgfra):
+	# Read CPU temp/fs/rpm and GPU temp/fs/rpm, used by option: -r
+	with open(EC_IO_FILE,'rb') as file:
+		file.seek(rcta)
+		temp_cpu = int(file.read(1).hex(),16)
+		file.seek(rcfsa)
+		fans_cpu = int(file.read(1).hex(),16)
+		file.seek(rcfra)
+		fanr_cpu = int(file.read(2).hex(),16)
+		file.seek(rgta)
+		temp_gpu = int(file.read(1).hex(),16)
+		file.seek(rgfsa)
+		fans_gpu = int(file.read(1).hex(),16)
+		file.seek(rgfra)
+		fanr_gpu = int(file.read(2).hex(),16)
+		if int(fanr_cpu) != 0:
+			fanr_cpu = 478000//int(fanr_cpu)
+		if int(fanr_gpu) != 0:
+			fanr_gpu = 478000//int(fanr_gpu)
+		return(temp_cpu, fans_cpu, fanr_cpu, temp_gpu, fans_gpu, fanr_gpu)
+
 def single_write(address, value):
 	# Write a single value into EC, used by options: -b -s -u
 	with open(EC_IO_FILE,'r+b') as file:
@@ -400,10 +421,10 @@ def main():
 	                    help = '┬ show current profile in EC\n'
 	                           '└ replace '+Text.ULINED+'P'+Text.CLEAR+' with '
 	                           +Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n ')
-	parser.add_argument('-r', type = ec_read,
+	parser.add_argument('-r', type = ec_read, nargs = '?', const = '0',
 	                    help = '┬ show realtime CPU+GPU temp and fan speed from EC\n'
-	                           '└ replace '+Text.ULINED+'R'+Text.CLEAR+' with '
-	                           +Text.ULINED+'SECTION_NAME'+Text.CLEAR+'\n ')
+	                           '├ replace [R] with any [NUMBER] to perform a [NUMBER] of time(s)\n'
+	                           '└ Assume [0] if given nothing = infinite loop\n ')
 	parser.add_argument('-s', type = ec_set, nargs = 2,
 	                    help = '┬ set a single value into EC\n'
 	                           '├ replace 1st '+Text.ULINED+'S'+Text.CLEAR+' with '

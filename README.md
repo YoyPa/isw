@@ -32,7 +32,7 @@
 ## How to use it ?
 ### Current --help output
 ```
-usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r R] [-s S S] [-u USB] [-w W]
+usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r [R]] [-s S S] [-u USB] [-w W]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -47,8 +47,9 @@ optional arguments:
   -p P                  ┬ show current profile in EC
                         └ replace P with SECTION_NAME
 
-  -r R                  ┬ show realtime CPU+GPU temp and fan speed from EC
-                        └ replace R with SECTION_NAME
+  -r [R]                ┬ show realtime CPU+GPU temp and fan speed from EC
+                        ├ replace [R] with any [NUMBER] to perform a [NUMBER] of time(s)
+                        └ Assume [0] if given nothing = infinite loop
 
   -s S S                ┬ set a single value into EC
                         ├ replace 1st S with ADDRESS in hexadecimal (0x00)
@@ -82,7 +83,7 @@ optional arguments:
 
 If you want to change temperature treshold and/or fan speed for cpu and/or gpu, you have to edit the corresponding section in ```isw.conf``` to set the wanted values and use ```isw -w 14A1EMS1``` to apply.
 
-If you want to check the current temperature and fan speed you will have to type ```isw -r 14A1EMS1```.
+If you want to check the current temperature and fan speed you will have to type ```isw -r```.
 
 Don't forget to read the comment at the beginning of ```isw.conf```, it contain some helpfull info.
 
