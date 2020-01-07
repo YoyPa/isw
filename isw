@@ -145,6 +145,7 @@ def ec_profile(value):
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
+		bcta = int(cfgp.get(ap, 'battery_charge_treshold_address'),16)
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -170,6 +171,22 @@ def ec_profile(value):
 		      hex(fm)+'('+str(fm)+')',
 		      hex(fma)+'(byte'+str(fma)+')',
 		      sfm+'\n'))
+		file.seek(bcta)
+		bct = int(file.read(1).hex(),16)
+		print(Text.YELLOW+Text.THREE_COLUMN %(
+		      'Value',
+		      'set @ address',
+		      'Charging below - stop @')+Text.CLEAR)
+		if int(bct) in range(148, 229):
+			print(Text.THREE_COLUMN %(
+			      hex(bct)+'('+str(bct)+')',
+			      hex(bcta)+'(byte'+str(bcta)+')',
+			      str(int(bct)-138)+'% - '+str(int(bct)-128)+'%\n'))
+		else:
+			print(Text.THREE_COLUMN %(
+			      hex(bct)+'('+str(bct)+')',
+			      hex(bcta)+'(byte'+str(bcta)+')',
+			      'Nothing is set\n'))
 		for i in range(6):
 			file.seek(list_cta[i])
 			list_ct.append(int(file.read(1).hex(),16))
@@ -252,6 +269,19 @@ def ec_set(value):
 	if len(Store.list_s) == 2:
 		single_write(int(Store.list_s[0],16), int(Store.list_s[1]))
 
+def ec_battery_treshold(value):
+	# Option -t, set the battery charging treshold
+	with open(CFG_FILE) as cfgfile:
+		cfgp = configparser.ConfigParser()
+		cfgp.read_file(cfgfile)
+		cbta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'battery_charge_treshold_address'),16)
+		if int(value) in range(20, 101):
+			single_write(cbta, int(value)+128)
+		else:
+			print('Error: Only '+Text.ULINED+'NUMBER'+Text.CLEAR+' between '
+			      +Text.ULINED+'20'+Text.CLEAR+' and '
+			      +Text.ULINED+'100'+Text.CLEAR+' are valid.')
+
 def ec_usb_backlight(value):
 	# Option -u, set usb backlight level
 	with open(CFG_FILE) as cfgfile:
@@ -291,6 +321,8 @@ def ec_write(value):
 		ap = cfgp.get(value, 'address_profile')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
 		fm = int(cfgp.get(value, 'fan_mode'))
+		bcta = int(cfgp.get(ap, 'battery_charge_treshold_address'),16)
+		bct = int(cfgp.get(value, 'battery_charge_treshold'))
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -320,6 +352,18 @@ def ec_write(value):
 		      hex(fm)+'('+str(fm)+')',
 		      hex(fma)+'(byte'+str(fma)+')',
 		      sfm+'\n'))
+		if int(bct) in range(20, 101):
+			file.seek(bcta)
+			bct = int(bct)+128
+			file.write(bytes((bct,)))
+			print(Text.YELLOW+Text.THREE_COLUMN %(
+			      'Value',
+			      'set @ address',
+			      'Charging below - stop @')+Text.CLEAR)
+			print(Text.THREE_COLUMN %(
+			      hex(bct)+'('+str(bct)+')',
+			      hex(bcta)+'(byte'+str(bcta)+')',
+			      str(int(bct)-138)+'% - '+str(int(bct)-128)+'%\n'))
 		for i in range(6):
 			file.seek(list_cta[i])
 			file.write(bytes((list_ct[i],)))
@@ -373,7 +417,7 @@ def read_temp_fs_rpm(rcta, rcfsa, rcfra, rgta, rgfsa, rgfra):
 		return(temp_cpu, fans_cpu, fanr_cpu, temp_gpu, fans_gpu, fanr_gpu)
 
 def single_write(address, value):
-	# Write a single value into EC, used by options: -b -s -u
+	# Write a single value into EC, used by options: -b -s -t -u
 	with open(EC_IO_FILE,'r+b') as file:
 		file.seek(address)
 		file.write(bytes((value,)))
@@ -431,6 +475,12 @@ def main():
 	                           +Text.ULINED+'ADDRESS'+Text.CLEAR+' in hexadecimal (0x00)\n'
 	                           '└ replace 2nd '+Text.ULINED+'S'+Text.CLEAR+' with '
 	                           +Text.ULINED+'VALUE'+Text.CLEAR+'   in decimal     (00)\n ')
+	parser.add_argument('-t', type = ec_battery_treshold,
+	                    help = '┬ set the battery charging treshold\n'
+	                           '└ replace '+Text.ULINED+'T'+Text.CLEAR+' with a '
+	                           +Text.ULINED+'NUMBER'+Text.CLEAR+' between '
+	                           +Text.ULINED+'20'+Text.CLEAR+' and '
+	                           +Text.ULINED+'100'+Text.CLEAR+' (٪)\n ')
 	parser.add_argument('-u', '--usb', type = ec_usb_backlight,
 	                    help = '┬ set usb backlight level\n'
 	                           '└ replace '+Text.ULINED+'USB'+Text.CLEAR+' with '
