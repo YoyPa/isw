@@ -32,7 +32,7 @@
 ## How to use it ?
 ### Current --help output
 ```
-usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r [R]] [-s S S] [-u USB] [-w W]
+usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r [R]] [-s S S] [-t T] [-u USB] [-w W]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -54,6 +54,9 @@ optional arguments:
   -s S S                ┬ set a single value into EC
                         ├ replace 1st S with ADDRESS in hexadecimal (0x00)
                         └ replace 2nd S with VALUE   in decimal     (00)
+
+  -t T                  ┬ set the battery charging treshold
+                        └ replace T with a NUMBER between 20 and 100 (٪)
 
   -u USB, --usb USB     ┬ set usb backlight level
                         └ replace USB with off, half OR full
