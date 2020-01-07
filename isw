@@ -145,7 +145,7 @@ def ec_profile(value):
 		list_gfs = []
 		ap = cfgp.get(value, 'address_profile')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
-		bcta = int(cfgp.get(ap, 'battery_charge_treshold_address'),16)
+		bcta = int(cfgp.get(ap, 'battery_charging_threshold_address'),16)
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -269,12 +269,12 @@ def ec_set(value):
 	if len(Store.list_s) == 2:
 		single_write(int(Store.list_s[0],16), int(Store.list_s[1]))
 
-def ec_battery_treshold(value):
-	# Option -t, set the battery charging treshold
+def ec_battery_threshold(value):
+	# Option -t, set the battery charging threshold
 	with open(CFG_FILE) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
-		cbta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'battery_charge_treshold_address'),16)
+		cbta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'battery_charging_threshold_address'),16)
 		if int(value) in range(20, 101):
 			single_write(cbta, int(value)+128)
 		else:
@@ -321,8 +321,8 @@ def ec_write(value):
 		ap = cfgp.get(value, 'address_profile')
 		fma = int(cfgp.get(ap, 'fan_mode_address'),16)
 		fm = int(cfgp.get(value, 'fan_mode'))
-		bcta = int(cfgp.get(ap, 'battery_charge_treshold_address'),16)
-		bct = int(cfgp.get(value, 'battery_charge_treshold'))
+		bcta = int(cfgp.get(ap, 'battery_charging_threshold_address'),16)
+		bct = int(cfgp.get(value, 'battery_charging_threshold'))
 		for i in range(7):
 			if i<6:
 				list_cta.append(int(cfgp.get(ap, 'cpu_temp_address_'+str(i)),16))
@@ -475,8 +475,8 @@ def main():
 	                           +Text.ULINED+'ADDRESS'+Text.CLEAR+' in hexadecimal (0x00)\n'
 	                           '└ replace 2nd '+Text.ULINED+'S'+Text.CLEAR+' with '
 	                           +Text.ULINED+'VALUE'+Text.CLEAR+'   in decimal     (00)\n ')
-	parser.add_argument('-t', type = ec_battery_treshold,
-	                    help = '┬ set the battery charging treshold\n'
+	parser.add_argument('-t', type = ec_battery_threshold,
+	                    help = '┬ set the battery charging threshold\n'
 	                           '└ replace '+Text.ULINED+'T'+Text.CLEAR+' with a '
 	                           +Text.ULINED+'NUMBER'+Text.CLEAR+' between '
 	                           +Text.ULINED+'20'+Text.CLEAR+' and '
