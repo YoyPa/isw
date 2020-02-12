@@ -1,0 +1,13 @@
+Source: isw
+Section: unknown
+Priority: optional
+Maintainer: Hayden Hughes <hayden@vulpes.chickenkiller.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.0
+Homepage: https://github.com/YoyPa/isw
+
+Package: isw
+Architecture: any
+Depends: python3
+Description: Ice-Sealed Wyvern
+ It is meant to alter fan profiles of MSI laptops.

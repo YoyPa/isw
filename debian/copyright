@@ -1,0 +1,7 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: isw
+Source: https://github.com/YoyPa/isw
+
+Files: *
+Copyright: 2020 YoyPa
+License: GPL-3
