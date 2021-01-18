@@ -17,10 +17,11 @@
 ## How to install (GUI Version)
 - open terminal in the folder where file is present.
 - Make script executable by running following code in terminal ```sudo chmod +x isw_install.py```.
-- now the file can be executed by running code ```sudo isw_install.py```.
+- now the file can be executed by running code ```./isw_install.py```.
 
 ## How to use the GUI?
 - The GUI is simple. just search for your section number in the isw.conf file and paste it in the text box.
+- open terminal in the same directory and type ```./isw_install.py```
 - Just click ```install``` and enjoy while it installs itself.
 - click ```monitor``` for starting a terminal with temps.
 - click ```startup``` to make service automatically run at startup.
