@@ -12,7 +12,21 @@
 - isw is made/tested with MSI GS40 6QE under Arch/Manjaro, other laptops depend on user contribution.
 - Check that your EC (Embedded Controler) work the same way, you can find documentation on the <a href="https://github.com/YoyPa/isw/wiki/MSI-G-laptop-EC---Rosetta">wiki</a>.
 
-## How to install
+## BOTH GUI AND TERMINAL VERSION ARE INTERCOMPATABLE. INSTALLING ANY ONE WILL EXECUTE 100% ON BOTH GUI AND TERMINAL!
+
+## How to install (GUI Version)
+- open terminal in the folder where file is present.
+- Make script executable by running following code in terminal ```sudo chmod +x isw_install.py```.
+- now the file can be executed by running code ```sudo isw_install.py```.
+
+## How to use the GUI?
+- The GUI is simple. just search for your section number in the isw.conf file and paste it in the text box.
+- Just click ```install``` and enjoy while it installs itself.
+- click ```monitor``` for starting a terminal with temps.
+- click ```startup``` to make service automatically run at startup.
+- click ```uninstall``` to remove all files written.
+
+## How to install (Terminal Version)
 ### Package or not package ?
 - If you are using archlinux or a derivative you can install it from AUR: ```yay -S isw```
 - If you are on a different distro family:
@@ -29,7 +43,7 @@
     - copy both ```isw-ec_sys.conf``` files provided (/etc/mod[...]) with same path (Arch AUR package will do it for you).
     - then reboot OR ```modprobe ec_sys write_support=1```.
 
-## How to use it ?
+## How to use it in Terminal?
 ### Current --help output
 ```
 usage: isw [-h] [-b B] [-c] [-f FILE] [-p P] [-r [R]] [-s S S] [-t T] [-u USB] [-w W]
@@ -101,5 +115,6 @@ systemctl enable isw@[SECTION_NAME].service
 - Daemonisation
 	- Launch at startup                            done
 	- launch after resume (hibernation/suspend)    done
+	- GUI interface                                done (Ver 1.0) (Will be Updated Regularly)
 	- Launch at event(power source change)
 ```
