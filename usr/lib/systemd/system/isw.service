@@ -1,0 +1,11 @@
+#!/bin/sh
+[Unit]
+Description=ISW fan control service
+After=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target
+
+[Service]
+ExecStart=/usr/bin/isw -w [Section_Name]
+
+[Install]
+WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target multi-user.target
+
