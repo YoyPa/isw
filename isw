@@ -44,9 +44,9 @@ def ec_boost(value):
 		cba = int(cfgp.get(ap, 'cooler_boost_address'),16)
 		cb_off = int(cfgp.get('COOLER_BOOST', 'cooler_boost_off'))
 		cb_on = int(cfgp.get('COOLER_BOOST', 'cooler_boost_on'))
-		if value == 'off':
+		if value.lower() == 'off':
 			single_write(cba, cb_off)
-		elif value == 'on':
+		elif value.lower() == 'on':
 			single_write(cba, cb_on)
 		else:
 			print('Error: Only '+Text.ULINED+'off'+Text.CLEAR+' and '
