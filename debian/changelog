@@ -1,3 +1,9 @@
+isw (1.10-2) unstable; urgency=medium
+
+  * Ship ec_sys as a dkms module
+
+ -- Jose Angel Pastrana Padilla <japp0005@red.ujaen.es>  Sun, 08 Aug 2021 10:45:29 +0200
+
 isw (1.10-1) unstable; urgency=medium
 
   * Release 1.10

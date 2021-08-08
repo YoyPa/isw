@@ -15,6 +15,11 @@
 ## How to install
 ### Package or not package ?
 - If you are using archlinux or a derivative you can install it from AUR: ```yay -S isw```
+- If you are using debian or a derivate:
+  - Clone ```git clone https://github.com/YoyPa/isw```
+  - Install build tools for packaging ```apt install build-essential devscripts```
+  - Build the package ```debuild -us -uc -b```
+  - Install it ```apt install ../isw_*.deb```
 - If you are on a different distro family:
   - Clone ```git clone https://github.com/YoyPa/isw```
   - Then look at this <a href="https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=isw">PKGBUILD</a> to know where to put files.

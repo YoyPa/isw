@@ -1,8 +1,8 @@
 Source: isw
-Section: unknown
+Section: admin
 Priority: optional
 Maintainer: Hayden Hughes <hayden@vulpes.chickenkiller.com>
-Build-Depends: debhelper-compat (= 12)
+Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.4.0
 Homepage: https://github.com/YoyPa/isw
 
