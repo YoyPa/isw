@@ -11,7 +11,9 @@ from argparse import RawTextHelpFormatter
 
 # Global vars
 EC_IO_FILE = '/sys/kernel/debug/ec/ec0/io'
-CFG_FILE = '/etc/isw.conf'
+
+# Global (mutable) vars
+cfg_file = '/etc/isw.conf'
 
 # Text formating
 class Text:
@@ -34,10 +36,15 @@ class Store:
 	dump_pos = ''
 	list_s = []
 
+# Configuration functions
+def config_file(value):
+	global cfg_file 
+	cfg_file = value
+
 # First level functions
 def ec_boost(value):
 	# Option -b, enable or disable CoolerBoost
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		ap = cfgp.get('COOLER_BOOST', 'address_profile')
@@ -132,7 +139,7 @@ def file_profile(value):
 def ec_profile(value):
 	# Option -p, show current profile in EC
 	print('\nProfile dump '+str(Store.dump_pos))
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		list_cta = []
@@ -219,7 +226,7 @@ def ec_profile(value):
 
 def ec_read(value):
 	# Option -r, show realtime CPU+GPU temp and fan speed from EC
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		rcta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'realtime_cpu_temp_address'),16)
@@ -271,7 +278,7 @@ def ec_set(value):
 
 def ec_battery_threshold(value):
 	# Option -t, set the battery charging threshold
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		cbta = int(cfgp.get('MSI_ADDRESS_DEFAULT', 'battery_charging_threshold_address'),16)
@@ -284,7 +291,7 @@ def ec_battery_threshold(value):
 
 def ec_usb_backlight(value):
 	# Option -u, set usb backlight level
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		ap = cfgp.get('USB_BACKLIGHT', 'address_profile')
@@ -307,7 +314,7 @@ def ec_write(value):
 	# Option -w, write into EC
 	Store.dump_pos = 'after modification'
 	print('\nWriting config to EC...')
-	with open(CFG_FILE) as cfgfile:
+	with open(cfg_file) as cfgfile:
 		cfgp = configparser.ConfigParser()
 		cfgp.read_file(cfgfile)
 		list_cta = []
@@ -450,6 +457,10 @@ def main():
 │ It means Ice-Sealed Wyvern in opposition to MSI's 'unleash the dragon'  │
 └─────────────────────────────────────────────────────────────────────────┘
 ''')
+	parser.add_argument('--config-file', type = config_file,
+						help = '┬ set a different config file\n'
+							   '└ replace '+Text.ULINED+'FILE'+Text.CLEAR+' with '
+							   +Text.ULINED+'CONFIG_FILE'+Text.CLEAR+'\n ')
 	parser.add_argument('-b', type = ec_boost,
 	                    help = '┬ enable or disable CoolerBoost\n'
 	                           '└ replace '+Text.ULINED+'B'+Text.CLEAR+' with '
