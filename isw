@@ -429,6 +429,22 @@ def single_write(address, value):
 		      hex(value)+'('+str(value)+')',
 		      hex(address)+'(byte'+str(address)+')'))
 
+def force_fan_speed(percentage):
+    # Set fan speed to input percentage
+    percentage = int(percentage)
+    with open(EC_IO_FILE, 'r+b') as file:
+        if (percentage < 0 or percentage > 100):
+            file.seek(0x33)
+            switch = int(file.read(1).hex(), 16)
+            switch &= 0xFD
+            single_write(0x33, switch)
+        else:
+            file.seek(0x33)
+            switch = int(file.read(1).hex(), 16)
+            switch |= 2
+            single_write(0x33, switch)
+            single_write(0x35, percentage)
+
 def main():
 	# ArgumentParser deal with option/argument handling
 	# 'type =' is used to launch a function, having an argument is mandatory
@@ -491,6 +507,9 @@ def main():
 	                    help = '┬ write into EC\n'
 	                           '└ replace '+Text.ULINED+'W'+Text.CLEAR+' with '
 	                           +Text.ULINED+'SECTION_NAME'+Text.CLEAR+'')
+	parser.add_argument('-x', type=force_fan_speed,
+						help='Tset fan speed forcibly\n'
+							 'Ltype a number(0-100) for the percentage of fan speed,-1 for off\n')
 	if len(sys.argv) == 1:
 		parser.print_help(sys.stderr)
 	parser.parse_args()
